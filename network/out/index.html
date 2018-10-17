@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>Zero To Blockchain Chapter04 for hyplerledger composer.</h1><p><a href="../README.pdf">Table of Contents</a></p>
+<p>This chapter focuses on the following files: </p>
+<pre class="prettyprint source"><code>Chapter 04
+  ↳ network
+   permissions.acl
+   queries.qry
+    ↳lib
+      sample.js
+    ↳models
+      base.cto
+      events.cto
+      sample.cto
+    ↳test
+      sample.js</code></pre><p>Key files:</p>
+<ul>
+<li><strong>models/sample.cto</strong> <ul>
+<li>This is the 'model' file, which defines the types of members and assets in a business network and also establishes the speicif transactions which can be executed in a network. </li>
+<li><strong>lib/sample.js</strong></li>
+<li>The sample.js file in the lib folder contains all of the code to implement each transaction defined in the sample.cto file. </li>
+<li><strong>test/sample.js</strong></li>
+<li>This file provides the unit tests for the network. </li>
+</ul>
+</li>
+</ul>
+<h2>Installing the code:</h2><ul>
+<li><p>run this command from a terminal window: <code>npm install</code></p>
+<ul>
+<li>when you run <code>npm install</code> command, you will get the following error, which you can ignore. The error is caused by the installation process for the SDK tooling, which searches for all instances of files ending in <code>.cto</code> . Because we have those files in the answers folder, as well as in the (correctly placed) network/models folder, npm install gets confused. It's ok, the process will still work correctly. <pre class="prettyprint source"><code>Looking for package.json of Business Network Definition
+Input directory: /Users/robertdill/Documents/GitHub/Z2B_Master/Chapter04
+Error: namespace already exists
+   at ModelManager.addModelFiles (/usr/local/lib/node_modules/composer-cli/node_modules/composer-common/lib/modelmanager.js:241:31)
+   at Function._processModelFiles (/usr/local/lib/node_modules/composer-cli/node_modules/composer-common/lib/businessnetworkdefinition.js:457:43)
+   at Promise.resolve.then (/usr/local/lib/node_modules/composer-cli/node_modules/composer-common/lib/businessnetworkdefinition.js:620:18)
+   at process._tickCallback (internal/process/next_tick.js:109:7)
+   at Module.runMain (module.js:606:11)
+   at run (bootstrap_node.js:383:7)
+   at startup (bootstrap_node.js:149:9)
+   at bootstrap_node.js:496:3
+Error: namespace already exists
+   at ModelManager.addModelFiles (/usr/local/lib/node_modules/composer-cli/node_modules/composer-common/lib/modelmanager.js:241:31)
+   at Function._processModelFiles (/usr/local/lib/node_modules/composer-cli/node_modules/composer-common/lib/businessnetworkdefinition.js:457:43)
+   at Promise.resolve.then (/usr/local/lib/node_modules/composer-cli/node_modules/composer-common/lib/businessnetworkdefinition.js:620:18)
+   at process._tickCallback (internal/process/next_tick.js:109:7)
+   at Module.runMain (module.js:606:11)
+   at run (bootstrap_node.js:383:7)
+   at startup (bootstrap_node.js:149:9)
+   at bootstrap_node.js:496:3</code></pre></li>
+</ul>
+</li>
+<li><p>then run <code>buildAndDeploy</code> (yes, case is important)</p>
+</li>
+<li>then run <code>npm run test</code></li>
+<li>this should deliver the following result:<br><code>`</code><br>Finance Network<br> #createOrder<br>   ✓ should be able to create an order (134ms)<br> #issueBuyRequest<br>   ✓ should be able to issue a buy request (76ms)<br> #issueOrderFromSupplier<br>   ✓ should be able to issue a supplier order (64ms)<br> #issueRequestShipment<br>   ✓ should be able to issue a request to ship product (51ms)<br> #issueDelivery<br>   ✓ should be able to record a product delivery<br> #issueRequestPayment<br>   ✓ should be able to issue a request to request payment for a product (58ms)<br> #issuePayment<br>   ✓ should be able to record a product payment<br> #issueDispute<br>   ✓ should be able to record a product dispute<br> #issueResolution<br>   ✓ should be able to record a dispute resolution (41ms)<br> #issueBackorder<br>   ✓ should be able to record a product backorder</li>
+</ul>
+<p>  10 passing (2s)</p>
+<pre class="prettyprint source"><code>
+The business network definitions are contained in the **sample.cto** file, which includes the *base.cto* and the *events.cto* file. 
+
+## Participant
+- `Buyer`
+- `Seller`
+- `Provider`
+- `Shipper`
+- `FinanceCo`
+
+## Asset
+- `Order`
+
+- `CreateOrder`
+- `Buy`
+- `OrderFromSupplier`
+- `RequestShipping`
+- `Deliver`
+- `RequestPayment`
+- `Pay`
+- `Dispute`
+- `Resolve`
+- `Backorder`
+
+## Event
+- `(none yet)`
+
+Orders are created by Buyers and executed by Sellers, who may work with a 3rd part (Provider) to fulfill the order. Either Sellers or Providers can RequestShipment, which is fulfilled by a Shipper who executes a Deliver transaction when complete. Orders can be Disputed. Disputed Orders can be resolved. Payments are made against either Delivered or Resolved Orders. 
+
+To test this Business Network Definition in the **Test** tab:
+
+Create a `Order` asset:
+</code></pre><p>asset Order identified by orderNumber {<br>    o String orderNumber<br>    o String status<br>    o Integer amount<br>    o String created<br>    o String bought<br>    o String ordered<br>    o String dateBackordered<br>    o String requestShipment<br>    o String delivered<br>    o String disputeOpened<br>    o String disputeResolved<br>    o String paymentRequested<br>    o String orderRefunded<br>    o String paid<br>    o String[] vendors<br>    o String dispute<br>    o String resolve<br>    o String backorder<br>    o String refund<br>    --&gt; Buyer buyer<br>    --&gt; Seller seller </p>
+<pre class="prettyprint source"><code>
+Create a participant:
+</code></pre><p>participant Buyer identified by buyerID {<br>    o String buyerID<br>    o String companyName<br>}<br>participant Seller identified by sellerID {<br>    o String sellerID<br>    o String companyName<br>}</p>
+<p>asset Order identified by orderNumber {<br>    o String orderNumber<br>    o String status<br>    o Integer amount<br>    o String created<br>    o String bought<br>    o String ordered<br>    o String dateBackordered<br>    o String requestShipment<br>    o String delivered<br>    o String disputeOpened<br>    o String disputeResolved<br>    o String paymentRequested<br>    o String orderRefunded<br>    o String paid<br>    o String[] vendors<br>    o String dispute<br>    o String resolve<br>    o String backorder<br>    o String refund<br>    --&gt; Buyer buyer<br>    --&gt; Seller seller </p>
+<p>}<br>participant Shipper identified by shipperID {<br>    o String shipperID<br>    o String companyName<br>}<br>participant Provider identified by providerID {<br>    o String providerID<br>    o String companyName<br>}<br>participant FinanceCo identified by financeCoID {<br>    o String financeCoID<br>    o String companyName<br>}</p>
+<pre class="prettyprint source"><code>
+Submit a  transaction:
+</code></pre><p>  transaction CreateOrder {<br>    o Integer amount<br>    --&gt; Order order<br>    --&gt; Buyer buyer<br>    --&gt; Seller seller<br>}<br>  transaction Buy {<br>    --&gt; Order order<br>    --&gt; Buyer buyer<br>    --&gt; Seller seller<br>}<br>  transaction OrderFromSupplier {<br>    --&gt; Order order<br>    --&gt; Provider provider<br>}<br>  transaction RequestShipping {<br>    --&gt; Order order<br>    --&gt; Shipper shipper<br>}<br>  transaction Deliver {<br>    --&gt; Order order<br>    --&gt; Shipper shipper<br>}<br>  transaction BackOrder {<br>    o String backorder<br>    --&gt; Order order<br>    --&gt; Provider provider<br>}<br>  transaction Dispute {<br>    o String dispute<br>    --&gt; Order order<br>    --&gt; Buyer buyer<br>    --&gt; Seller seller<br>    --&gt; FinanceCo financeCo<br>}<br>  transaction Resolve {<br>    o String resolve<br>    --&gt; Order order<br>    --&gt; Buyer buyer<br>    --&gt; Seller seller<br>    --&gt; FinanceCo financeCo<br>}<br>  transaction RequestPayment {<br>    --&gt; Order order<br>    --&gt; Buyer buyer<br>    --&gt; Seller seller<br>    --&gt; FinanceCo financeCo<br>}<br>  transaction Pay {<br>    --&gt; Order order<br>    --&gt; Seller seller<br>    --&gt; FinanceCo financeCo<br>}<br>  transaction Refund {<br>    o String refund<br>    --&gt; Order order<br>    --&gt; Buyer buyer<br>    --&gt; Seller seller<br>    --&gt; FinanceCo financeCo<br>}<br><code>`</code></p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AuthorizePayment">AuthorizePayment</a></li><li><a href="global.html#BackOrder">BackOrder</a></li><li><a href="global.html#Buy">Buy</a></li><li><a href="global.html#CreateOrder">CreateOrder</a></li><li><a href="global.html#Deliver">Deliver</a></li><li><a href="global.html#Delivering">Delivering</a></li><li><a href="global.html#Dispute">Dispute</a></li><li><a href="global.html#OrderCancel">OrderCancel</a></li><li><a href="global.html#OrderFromSupplier">OrderFromSupplier</a></li><li><a href="global.html#Pay">Pay</a></li><li><a href="global.html#Refund">Refund</a></li><li><a href="global.html#RequestPayment">RequestPayment</a></li><li><a href="global.html#RequestShipping">RequestShipping</a></li><li><a href="global.html#Resolve">Resolve</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Sep 11 2018 16:15:52 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
