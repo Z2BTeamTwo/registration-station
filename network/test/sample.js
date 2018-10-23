@@ -21,7 +21,14 @@ require('chai').should();
 // const network = 'zerotoblockchain-network';
 const _timeout = 90000;
 const NS = 'org.acme.Z2BTestNetwork';
+const courseNo = '12345';
+const studentID = 'beststudentever@email.com';
+const registrarID = 'registerwithUS@email.com';
+const cashierID = 'weTakeYoMoneys';
+const reasonForCancellation = 'Scooby Doo is AWESOME';
+const reasonForRejection = '3.14159265358979323846';
 /*
+
 const orderNo = '12345';
 const buyerID = 'billybob@email.com';
 const sellerID = 'simon@email.com';
@@ -106,6 +113,7 @@ function createCourseTemplate (_inbound)
  * @returns {Order} - updated order item with all required fields except for relationships (buyer, seller)
  * @utility
  */
+/*
 function addItems (_inbound)
 {
     _inbound.items.push('{"itemNo": 1, "itemDescription": "Macbook Pro 16Gb, 1Tb", "quantity": 2, "unitPrice": 1285, "extendedPrice": 3470}');
@@ -119,6 +127,7 @@ function addItems (_inbound)
     orderAmount= _inbound.amount;
     return (_inbound);
 }
+*/
 
 describe('Finance Network', function () {
     this.timeout(_timeout);
@@ -210,14 +219,49 @@ describe('Finance Network', function () {
         });
     });
 
-    describe('#issueBuyRequest', () => {
+    describe('#issueRegisterRequest', () => {
 
-        it('should be able to issue a buy request', () => {
+        it('should be able to issue a register request', () => {
             const factory = businessNetworkConnection.getBusinessNetwork().getFactory();
 
             // create the buy transaction
-            const buyNow = factory.newTransaction(NS, 'Buy');
+            //const buyNow = factory.newTransaction(NS, 'Buy');
 
+            //create the course transaction 
+            const registerNow = factory.newTRansactions(NS, 'Register'); 
+
+            return businessNetworkConnection.getAssetRegistry(NS + '.Course')
+                .then((assetRegistry) => {
+                    // re-get the commodity
+                    return assetRegistry.get(courseNo);
+                })
+                .then((newOrder) => {
+                    newCourse.student.$identifier.should.equal(studentID);
+                    newCourse.$identifier.should.equal(courseNo);
+                    registerNow.course = factory.newRelationship(NS, 'Register', newCourse.$identifier);
+                    registerNow.student = newOrder.buyer;
+                    registerNow.student = newOrder.seller;
+                    // submit the transaction
+                    return businessNetworkConnection.submitTransaction(registerNow)
+                        .then(() => {
+                            return businessNetworkConnection.getAssetRegistry(NS + '.Order');
+                        })
+                        .then((assetRegistry) => {
+                            // re-get the commodity
+                            return assetRegistry.get(courseNo);
+                        })
+                        .then((newCourse) => {
+                            // the owner of the commodity should be buyer
+                            newCourse.student.$identifier.should.equal(studentID);
+                            //JSON.parse(newCourse.status).text.should.equal(orderStatus.Bought.text);
+                        });
+
+                });
+        });
+
+            
+
+            /*
             return businessNetworkConnection.getAssetRegistry(NS + '.Order')
                 .then((assetRegistry) => {
                     // re-get the commodity
@@ -246,6 +290,7 @@ describe('Finance Network', function () {
 
                 });
         });
+        */
     });
 
     describe('#issueOrderFromSupplier', () => {
