@@ -5,127 +5,114 @@ namespace org.acme.Z2BTestNetwork
 import composer.base.*
 import composer.events.*
 
-participant Buyer identified by buyerID extends Member{
-    o String buyerID
+participant Student identified by studentID extends Member{
+    o String studentID
 }
-participant Seller identified by sellerID extends Member{
-    o String sellerID
+participant Registrar identified by registrarID extends Member{
+    o String registrarID
 }
-participant Shipper identified by shipperID extends Member {
-    o String shipperID
-}
-participant Provider identified by providerID extends Member {
-    o String providerID
-}
-participant FinanceCo identified by financeCoID extends Member {
-    o String financeCoID
+participant Cashier identified by cashierID extends Member {
+    o String cashierID
 }
 
-asset Order identified by orderNumber {
-    o String orderNumber
-    o String[] items
+asset Course identified by courseCode {
+    /**
+    This section should contain the data elements
+    */
+    o String courseCode
+    o String courseTitle
+    o String schedule
+    o Integer creditHours
     o String status
-    o String dispute
-    o String resolve
-    o String backorder
-    o String refund
-    o Integer amount
-    o String created
-    o String bought
-    o String cancelled
-    o String ordered
-    o String dateBackordered
-    o String requestShipment
-    o String delivered
-    o String delivering
-    o String disputeOpened
-    o String disputeResolved
-    o String paymentRequested
-    o String orderRefunded
-    o String approved
-    o String paid
-    --> Provider provider
-    --> Shipper shipper
-    --> Buyer buyer
-    --> Seller seller 
-    --> FinanceCo financeCo 
 
+    /**
+    This section will contain the statuses
+     */
+     o String registered
+     o String dropped
+     o String tuitionRequested
+     o String tuitionPaid
+     o String refunded
+     o String registrationStatusAccepted
+     o String registrationStatusDenied
+     o String registrationStatusForwarded
+     o String courseCancelled
+    
+    /**
+    This section will contain the participant references
+     */
+    --> Student student
+    --> Registrar registrar
+    --> Cashier cashier 
 }
-  transaction CreateOrder {
+
+  transaction CreateCourse {
+    --> Course course
+    --> Student student
+  }
+
+  transaction Register {
     o Integer amount
-    --> Order order
-    --> Buyer buyer
-    --> Seller seller
-    --> FinanceCo financeCo
+    --> Course course
+    --> Student student
+    --> Registrar registrar
 }
-  transaction OrderCancel {
-    --> Order order
-    --> Buyer buyer
-    --> Seller seller
+
+  transaction Drop {
+    --> Course course
+    --> Student student
+    --> Registrar registrar
 }
-  transaction Buy {
-    --> Order order
-    --> Buyer buyer
-    --> Seller seller
+  transaction RequestTuition {
+    o Double amountDue
+    --> Course course
+    --> Student student
+    --> Registrar registrar
+    --> Cashier cashier
 }
-  transaction OrderFromSupplier {
-    --> Order order
-    --> Provider provider
-    --> Seller seller
+  transaction PayTuition {
+    o Double amountPaid
+    --> Course course
+    --> Student student
+    --> Registrar registrar
+    --> Cashier cashier
 }
-  transaction RequestShipping {
-    --> Order order
-    --> Shipper shipper
-    --> Provider provider
+  transaction RefundTuition {
+     o Double refundTuition
+    --> Course course
+    --> Student student
+    --> Registrar registrar
+    --> Cashier cashier
 }
-  transaction Deliver {
-    --> Order order
-    --> Shipper shipper
+  transaction AcceptRegistrationStatus {
+    o String registrationStatus
+    --> Course course
+    --> Student student
+    --> Registrar registrar
+    --> Cashier cashier
 }
-  transaction Delivering {
-    o String deliveryStatus
-    --> Order order
-    --> Shipper shipper
+
+  transaction RejectRegistrationStatus {
+    o String registrationStatus
+    o String reasonForRejection
+    --> Course course
+    --> Student student
+    --> Registrar registrar
 }
-  transaction BackOrder {
-    o String backorder
-    --> Order order
-    --> Provider provider
+
+  transaction ForwardRegistrationStatus {
+    o String registrationStatus
+    o String reasonForRejection
+    --> Course course
+    --> Student student
+    --> Registrar registrar
+    --> Cashier cashier
 }
-  transaction Dispute {
-    o String dispute
-    --> Order order
-    --> Buyer buyer
-    --> Seller seller
-    --> FinanceCo financeCo
-}
-  transaction Resolve {
-    o String resolve
-    --> Order order
-    --> Buyer buyer
-    --> Seller seller
-    --> Shipper shipper
-    --> Provider provider
-    --> FinanceCo financeCo
-}
-  transaction RequestPayment {
-    --> Order order
-    --> Seller seller
-    --> FinanceCo financeCo
-}
-  transaction AuthorizePayment {
-    --> Order order
-    --> Buyer buyer
-    --> FinanceCo financeCo
-}
-  transaction Pay {
-    --> Order order
-    --> Seller seller
-    --> FinanceCo financeCo
-}
-  transaction Refund {
-    o String refund
-    --> Order order
-    --> Seller seller
-    --> FinanceCo financeCo
-}
+
+  transaction CancelCourse {
+    o String reasonForCancellation
+    --> Course course
+    --> Student student
+    --> Registrar registrar
+    --> Cashier cashier
+  }
