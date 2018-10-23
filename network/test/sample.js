@@ -21,6 +21,7 @@ require('chai').should();
 // const network = 'zerotoblockchain-network';
 const _timeout = 90000;
 const NS = 'org.acme.Z2BTestNetwork';
+/*
 const orderNo = '12345';
 const buyerID = 'billybob@email.com';
 const sellerID = 'simon@email.com';
@@ -51,16 +52,29 @@ let orderStatus = {
     'Refund': {'code': 12, 'text': 'Order Refund Requested'},
     'Refunded': {'code': 13, 'text': 'Order Refunded'}
 };
+*/
 
 
 /**
- * create an empty order
- * @param {createOrderTemplate} _inbound - Order created with factory.newResource(NS, 'Order', orderNo)
- * @returns {Order} - updated order item with all required fields except for relationships (buyer, seller)
+ * create an empty course
+ * @param {createCourseTemplate} _inbound - Order created with factory.newResource(NS, 'Order', orderNo)
+ * @returns {Course} - updated order item with all required fields except for relationships (student, registrar)
  * @utility
  */
-function createOrderTemplate (_inbound)
+function createCourseTemplate (_inbound)
 {
+    inbound.created = '';
+    inbound.registered = '';
+    inbound.dropped = '';
+    inbound.tuitionRequested = '';
+    inbound.tuitionPaid = '';
+    inbound.refunded = '';
+    inbound.registrationStatusAccepted = '';
+    inbound.registrationStatisDenied = '';
+    inbound.registrationSTatusForwarded = '';
+    inbound.courseCancelled = '';
+    return(_inbound);
+    /** 
     _inbound.orderNumber = '';
     _inbound.amount = 0;
     _inbound.items = [];
@@ -84,6 +98,7 @@ function createOrderTemplate (_inbound)
     _inbound.backorder = '';
     _inbound.refund = '';
     return(_inbound);
+    */
 }
 /**
  * update an empty order with 4 items. update the amount field based on the sum of the line items
