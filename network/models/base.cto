@@ -18,5 +18,5 @@
 namespace composer.base
 
 abstract participant Member {
-  o String companyName
+  o String participantName
 }
