@@ -7,15 +7,12 @@ import composer.events.*
 
 participant Student identified by studentID extends Member{
     o String studentID
-<<<<<<< HEAD
-=======
 }
 participant Registrar identified by registrarID extends Member{
     o String registrarID
 }
 participant Cashier identified by cashierID extends Member {
     o String cashierID
->>>>>>> transition
 }
 
 asset Course identified by courseCode {
@@ -26,18 +23,26 @@ asset Course identified by courseCode {
     o String courseTitle
     o String schedule
     o Integer creditHours
+    o Double amountPaid
+    o Double amountDue
+    o Double amountRefunded
     o String status
+    o String cancelReason
+    o String regStatus
+    o String refundReason
+    o String registrationRejectionReason
 
     /**
     This section will contain the statuses
      */
+     o String created
      o String registered
      o String dropped
      o String tuitionRequested
      o String tuitionPaid
      o String refunded
      o String registrationStatusAccepted
-     o String registrationStatusDenied
+     o String registrationStatusRejected
      o String registrationStatusForwarded
      o String courseCancelled
     
@@ -50,24 +55,23 @@ asset Course identified by courseCode {
 }
 
   transaction CreateCourse {
+    o Integer amount
     --> Course course
     --> Student student
   }
 
-  transaction Register {
-    o Integer amount
+  transaction RegisterCourse {
     --> Course course
     --> Student student
     --> Registrar registrar
 }
 
-  transaction Drop {
+  transaction DropCourse {
     --> Course course
     --> Student student
     --> Registrar registrar
 }
   transaction RequestTuition {
-    o Double amountDue
     --> Course course
     --> Student student
     --> Registrar registrar
@@ -82,6 +86,7 @@ asset Course identified by courseCode {
 }
   transaction RefundTuition {
      o Double refundTuition
+     o String reason
     --> Course course
     --> Student student
     --> Registrar registrar
@@ -95,7 +100,7 @@ asset Course identified by courseCode {
     --> Cashier cashier
 }
 
-  transaction RejectRegistrationStatus {
+  transaction DenyRegistrationStatus {
     o String registrationStatus
     o String reasonForRejection
     --> Course course
@@ -104,8 +109,6 @@ asset Course identified by courseCode {
 }
 
   transaction ForwardRegistrationStatus {
-    o String registrationStatus
-    o String reasonForRejection
     --> Course course
     --> Student student
     --> Registrar registrar
