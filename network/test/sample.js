@@ -23,7 +23,7 @@ const _timeout = 90000;
 const NS = 'org.acme.Z2BTestNetwork';
 const courseNo = '12345';
 const studentID = 'beststudentever@email.com';
-const registrarID = 'registerwithUS@email.com';
+const registrarID = 'registeringYouSinceYouWereBorn@email.com';
 const cashierID = 'weTakeYoMoneys';
 const reasonForCancellation = 'Scooby Doo is AWESOME';
 const reasonForRejection = '3.14159265358979323846';
@@ -137,6 +137,7 @@ describe('Finance Network', function () {
         return businessNetworkConnection.connect('admin@zerotoblockchain-network');
     });
 
+    /*
     describe('#createOrder', () => {
 
         it('should be able to create an order', () => {
@@ -186,7 +187,79 @@ describe('Finance Network', function () {
             order.amount.should.equal(orderAmount);
             createNew.amount.should.equal(orderAmount);
             createNew.order.$identifier.should.equal(orderNo);
+            */
+    describe('#createCourse', () => {
 
+        it('should be able to create a course', () => {
+            const factory = businessNetworkConnection.getBusinessNetwork().getFactory();
+            // create the student
+            const student = factory.newResource(NS, 'Student', studentID);
+            student.companyName = 'Jimbo';
+
+            // create the registrar
+            const registrar = factory.newResource(NS, 'Registrar', registrarID);
+            registrar.companyName = 'Wake Tech Registrar';
+
+            // create the cashier
+            cashier = factory.newResource(NS, 'Cashier', cashierID);
+            cashier.companyName = 'Wake Tech Cashier';
+
+            // create the course
+            let course = factory.newResource(NS, 'Course', courseNo);
+            course = createCourseTemplate(course);
+            course = addItems(course);
+            course.courseNumber = courseNo;
+
+            // create the buy transaction
+            const createNew = factory.newTransaction(NS, 'CreateCourse');
+
+            course.student = factory.newRelationship(NS, 'Student', student.$identifier);
+            order.registrar = factory.newRelationship(NS, 'Registrar', registrar.$identifier);
+            order.cashier = factory.newRelationship(NS, 'Cashier', cashier.$identifier);
+            createNew.cashier = factory.newRelationship(NS, 'Cashier', cashier.$identifier);
+            createNew.course = factory.newRelationship(NS, 'Course', course.$identifier);
+            createNew.student = factory.newRelationship(NS, 'Student', student.$identifier);
+            createNew.registrar = factory.newRelationship(NS, 'Registrar', registrar.$identifier);
+            createNew.amount = course.amount;
+           
+            JSON.parse(course.status).text.should.equal(courseStatus.Created.text);
+            order.amount.should.equal(courseAmount);
+            createNew.amount.should.equal(courseAmount);
+            createNew.course.$identifier.should.equal(courseNo);
+
+            // Get the asset registry.
+            return businessNetworkConnection.getAssetRegistry(NS + '.Course')
+                .then((assetRegistry) => {
+
+                    // add the course to the asset registry.
+                    return assetRegistry.add(course)
+                        .then(() => {
+                            return businessNetworkConnection.getParticipantRegistry(NS + '.Student');
+                        })
+                        .then((participantRegistry) => {
+                            // add the student and registrar
+                            return participantRegistry.addAll([student, registrar, cashier]);
+                        })
+                        .then(() => {
+                            // submit the transaction
+                            return businessNetworkConnection.submitTransaction(createNew);
+                        })
+                        .then(() => {
+                            return businessNetworkConnection.getAssetRegistry(NS + '.Course');
+                        })
+                        .then((assetRegistry) => {
+                            // re-get the commodity
+                            return assetRegistry.get(courseNo);
+                        })
+                        .then((newCourse) => {
+                            // the owner of the commodity should not be simon
+                            newCourse.student.$identifier.should.equal(studentID);
+                        });
+                });
+        });
+    });
+
+            /*
             // Get the asset registry.
             return businessNetworkConnection.getAssetRegistry(NS + '.Order')
                 .then((assetRegistry) => {
@@ -218,14 +291,12 @@ describe('Finance Network', function () {
                 });
         });
     });
+    */
 
     describe('#issueRegisterRequest', () => {
 
         it('should be able to issue a register request', () => {
             const factory = businessNetworkConnection.getBusinessNetwork().getFactory();
-
-            // create the buy transaction
-            //const buyNow = factory.newTransaction(NS, 'Buy');
 
             //create the course transaction 
             const registerNow = factory.newTRansactions(NS, 'Register'); 
@@ -235,12 +306,12 @@ describe('Finance Network', function () {
                     // re-get the commodity
                     return assetRegistry.get(courseNo);
                 })
-                .then((newOrder) => {
+                .then((newCourse) => {
                     newCourse.student.$identifier.should.equal(studentID);
                     newCourse.$identifier.should.equal(courseNo);
                     registerNow.course = factory.newRelationship(NS, 'Register', newCourse.$identifier);
-                    registerNow.student = newOrder.buyer;
-                    registerNow.student = newOrder.seller;
+                    registerNow.student = newCourse.buyer;
+                    registerNow.student = newCourse.seller;
                     // submit the transaction
                     return businessNetworkConnection.submitTransaction(registerNow)
                         .then(() => {
@@ -260,7 +331,8 @@ describe('Finance Network', function () {
         });
 
             
-
+          // create the buy transaction
+          //const buyNow = factory.newTransaction(NS, 'Buy');
             /*
             return businessNetworkConnection.getAssetRegistry(NS + '.Order')
                 .then((assetRegistry) => {
@@ -414,9 +486,53 @@ describe('Finance Network', function () {
         });
     });
 
-    describe('#issueRequestPayment', () => {
+    //describe('#issueRequestPayment', () => {
+    describe('#issueTuitionRequested', () => {
+        describe('#issueTuitionRequested', () => {
 
-        it('should be able to issue a request to request payment for a product', () => {
+            it('should be able to issue a request to request payment for the course', () => {
+                const factory = businessNetworkConnection.getBusinessNetwork().getFactory();
+
+                // create the buy transaction
+                const orderNow = factory.newTransaction(NS, 'RequestPayment');
+
+                return businessNetworkConnection.getParticipantRegistry(NS + '.Cashier')
+                    .then((participantRegistry) => {
+                        // add the cashier
+                        return participantRegistry.addAll([cashier]);
+                    })
+                    .then(() => {
+                        return businessNetworkConnection.getAssetRegistry(NS + '.Course');
+                    })
+                    .then((assetRegistry) => {
+                        // re-get the commodity
+                        return assetRegistry.get(courseNo);
+                    })
+                    .then((newCourse) => {
+                        newCourse.student.$identifier.should.equal(studentID);
+                        newCourse.$identifier.should.equal(courseNo);
+
+                        orderNow.course = factory.newRelationship(NS, 'Course', newCourse.$identifier);
+                        orderNow.cashier = factory.newRelationship(NS, 'Cashier', cashierID);
+                        orderNow.registrar = factory.newRelationship(NS, 'Registrar', newCourse.registrar.$identifier);
+                        // submit the transaction
+                        return businessNetworkConnection.submitTransaction(orderNow)
+                            .then(() => {
+                                return businessNetworkConnection.getAssetRegistry(NS + '.Course');
+                            })
+                            .then((assetRegistry) => {
+                                // re-get the commodity
+                                return assetRegistry.get(courseNo);
+                            })
+                            .then((newOrder) => {
+                                // the owner of the commodity should be student
+                                //JSON.parse(newOrder.status).text.should.equal(orderStatus.PayRequest.text);
+                            });
+                    });
+            });
+
+        /*
+        it('should be able to issue a request to request payment for the course', () => {
             const factory = businessNetworkConnection.getBusinessNetwork().getFactory();
 
             // create the buy transaction
@@ -456,8 +572,46 @@ describe('Finance Network', function () {
                         });
                 });
         });
-    });
+        */
+        });
 
+        describe('#authorizeTuitionPayment', () => {
+
+            it('should be able to record a approval for order payment', () => {
+                const factory = businessNetworkConnection.getBusinessNetwork().getFactory();
+
+                // create the Deliver transaction
+                const orderNow = factory.newTransaction(NS, 'AuthorizeTuitionPayment');
+
+                return businessNetworkConnection.getAssetRegistry(NS + '.Course')
+                    .then((assetRegistry) => {
+                        // re-get the commodity
+                        return assetRegistry.get(courseNo);
+                    })
+                    .then((newCourse) => {
+                        newCourse.student.$identifier.should.equal(studentID);
+                        newCourse.$identifier.should.equal(courseNo);
+
+                        orderNow.course = factory.newRelationship(NS, 'Course', newCourse.$identifier);
+                        orderNow.cashier = factory.newRelationship(NS, 'Cashier', cashierID);
+                        orderNow.student = factory.newRelationship(NS, 'Student', newCourse.student.$identifier);
+                        // submit the transaction
+                        return businessNetworkConnection.submitTransaction(orderNow)
+                            .then(() => {
+                                return businessNetworkConnection.getAssetRegistry(NS + '.Course');
+                            })
+                            .then((assetRegistry) => {
+                                // re-get the commodity
+                                return assetRegistry.get(courseNo);
+                            })
+                            .then((newCourse) => {
+                                // the owner of the commodity should be buyer
+                                //JSON.parse(newOrder.status).text.should.equal(orderStatus.Authorize.text);
+                            });
+
+                    });
+            });
+        /*
     describe('#authorizePayment', () => {
 
         it('should be able to record a approval for order payment', () => {
@@ -494,8 +648,9 @@ describe('Finance Network', function () {
 
                 });
         });
+        */
     });
-
+        /*
     describe('#Pay', () => {
 
         it('should be able to record an order payment', () => {
@@ -533,6 +688,7 @@ describe('Finance Network', function () {
                 });
         });
     });
+    */
 
     describe('#issueDispute', () => {
 
@@ -656,6 +812,45 @@ describe('Finance Network', function () {
                 });
         });
     });
+        describe('#issueDropCourse', () => {
+
+            it('should be able to record a course cancellation', () => {
+                const factory = businessNetworkConnection.getBusinessNetwork().getFactory();
+
+                // create the Deliver transaction
+                const orderNow = factory.newTransaction(NS, 'DropCourse');
+
+                return businessNetworkConnection.getAssetRegistry(NS + '.Course')
+                    .then((assetRegistry) => {
+                        // re-get the commodity
+                        return assetRegistry.get(courseNo);
+                    })
+                    .then((newCourse) => {
+                        newCourse.student.$identifier.should.equal(studentID);
+                        newCourse.$identifier.should.equal(courseNo);
+
+                        orderNow.course = factory.newRelationship(NS, 'Course', newCourse.$identifier);
+                        orderNow.registrar = factory.newRelationship(NS, 'Registrar', newCourse.registrar.$identifier);
+                        orderNow.student = factory.newRelationship(NS, 'Student', newCourse.student.$identifier);
+                        orderNow.cashier = factory.newRelationship(NS, 'Cashier', newCourse.cashier.$identifier);
+                        // submit the transaction
+                        return businessNetworkConnection.submitTransaction(orderNow)
+                            .then(() => {
+                                return businessNetworkConnection.getAssetRegistry(NS + '.Course');
+                            })
+                            .then((assetRegistry) => {
+                                // re-get the commodity
+                                return assetRegistry.get(courseNo);
+                            })
+                            .then((newOrder) => {
+                                // the owner of the commodity should be buyer
+                                //JSON.parse(newOrder.status).text.should.equal(orderStatus.Cancelled.text);
+                            });
+
+                    });
+            });
+        });
+        /*
     describe('#issueCancel', () => {
 
         it('should be able to record an order cancellation', () => {
@@ -693,6 +888,7 @@ describe('Finance Network', function () {
                 });
         });
     });
+    */
 
 });
 
