@@ -31,6 +31,7 @@ var courseStatus = {
  * @transaction
  */
 function CreateCourse(register) {
+    console.log("In create course.");
     register.course.student = register.student;
     register.course.amountDue = register.amount;
     register.course.amountPaid = 0.00;
@@ -65,7 +66,7 @@ function RegisterCourse(register) {
  * @transaction
  */
 function DropCourse(register) {
-    if (register.course.status == JSON.stringify(courseStatus.Created))
+    if (register.course.status == JSON.stringify(courseStatus.Created) || register.course.status == JSON.stringify(courseStatus.Registered))
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
@@ -83,7 +84,7 @@ function DropCourse(register) {
  * @transaction
  */
 function RequestTuition(register) {
-    if (register.course.status == JSON.stringify(courseStatus.Registered))
+    if (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusForwarded.code)
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
@@ -111,7 +112,7 @@ function PayTuition(register) {
         register.course.amountDue -= register.amountPaid;
         register.course.tuitionPaid = new Date().toISOString();
         var _status = courseStatus.TuitionPaid;
-        _status.text = " Amount due: $" + register.amountPaid.toString();
+        _status.text += " Amount due: $" + register.course.amountDue.toString();
         register.course.status = JSON.stringify(_status);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
@@ -125,18 +126,16 @@ function PayTuition(register) {
  * @transaction
  */
 function RefundTuition(register) {
-    if (register.course.status == JSON.stringify(orderStatus.RegistrationStatusForwarded) || register.course.status == JSON.stringify(orderStatus.Cancelled))
+    if (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusForwarded.code || register.course.status == JSON.stringify(courseStatus.Cancelled))
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
         register.course.cashier = register.cashier;
         register.course.refundReason = register.reason;
-        register.course.amountPaid -= register.refundTution;
-        register.course.amountDue += register.refundTuition;
-        register.course.amountRefunded += register.refundTuition;
+        register.course.amountRefunded += register.amountRefunded;
         register.course.refunded = new Date().toISOString();
-        var _status = courseStatus.Registered;
-        _status.text += " $" + register.refundTuition.toString() + " refunded."
+        var _status = courseStatus.Refunded;
+        _status.text += " in the amount of $" + register.amountRefunded.toString();
         register.course.status = JSON.stringify(_status);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
@@ -185,14 +184,14 @@ function AcceptRegistrationStatus(register) {
  * @transaction
  */
 function DenyRegistrationStatus(register) {
-    if ((register.course.status == JSON.stringify(courseStatus.Registered)))
+    if ((register.course.status == JSON.stringify(courseStatus.Registered)) || register.course.status == JSON.stringify(courseStatus.Dropped))
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
-        register.course.registrationRejectionReason = register.course.reasonForRejection;
-        register.course.registrationStatusRejected = new Date().toISOString();
+        register.course.registrationRejectionReason = register.reasonForRejection;
+        register.course.registrationStatusDenied = new Date().toISOString();
         var _status = courseStatus.RegistrationStatusDenied;
-        _status.text = " " + register.reasonForRejection + ".";
+        _status.text += " " + register.reasonForRejection;
         register.course.status = JSON.stringify(_status);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
@@ -206,18 +205,20 @@ function DenyRegistrationStatus(register) {
  * @transaction
  */
 function ForwardRegistrationStatus(register) {
-    if ((register.course.status == JSON.stringify(courseStatus.RegistrationStatusAccepted)) || (register.course.status == JSON.stringify(courseStatus.RegistrationStatusDenied)))
+    if (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusAccepted.code || JSON.parse(register.course.status).code == courseStatus.RegistrationStatusDenied.code)
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
         register.course.registrationStatusForwarded = new Date().toISOString();
         var _status = courseStatus.RegistrationStatusForwarded
-        _status.text = " " + register.registrationStatus;
+        _status.text += " " + register.course.registrationStatus;
         register.course.status = JSON.stringify(_status);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
                 return assetRegistry.update(register.course);
             });
+    } else {
+        console.log('The course status ' + register.course.status + " is not correct");
     }
 }
  /**
@@ -228,7 +229,8 @@ function ForwardRegistrationStatus(register) {
 function CancelCourse(register) {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
-        register.course.cancelReason = register.cancel;
+        register.course.cancelReason = register.reasonForCancellation;
+        register.course.registrationStatus = "Cancelled";
         register.course.courseCancelled = new Date().toISOString();
         register.course.status = JSON.stringify(courseStatus.Cancelled);
     return getAssetRegistry('org.acme.Z2BTestNetwork.Course')

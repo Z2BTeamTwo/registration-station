@@ -8,9 +8,11 @@ import composer.events.*
 participant Student identified by studentID extends Member{
     o String studentID
 }
-participant Registrar identified by registrarID extends Member{
+
+participant Registrar identified by registrarID extends Member {
     o String registrarID
 }
+
 participant Cashier identified by cashierID extends Member {
     o String cashierID
 }
@@ -28,7 +30,7 @@ asset Course identified by courseCode {
     o Double amountRefunded
     o String status
     o String cancelReason
-    o String regStatus
+    o String registrationStatus
     o String refundReason
     o String registrationRejectionReason
 
@@ -42,7 +44,7 @@ asset Course identified by courseCode {
      o String tuitionPaid
      o String refunded
      o String registrationStatusAccepted
-     o String registrationStatusRejected
+     o String registrationStatusDenied
      o String registrationStatusForwarded
      o String courseCancelled
     
@@ -85,7 +87,7 @@ asset Course identified by courseCode {
     --> Cashier cashier
 }
   transaction RefundTuition {
-     o Double refundTuition
+     o Double amountRefunded
      o String reason
     --> Course course
     --> Student student
@@ -101,7 +103,6 @@ asset Course identified by courseCode {
 }
 
   transaction DenyRegistrationStatus {
-    o String registrationStatus
     o String reasonForRejection
     --> Course course
     --> Student student
