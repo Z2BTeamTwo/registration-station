@@ -58,11 +58,9 @@ body {height: 100%}
     right: 0;
     top: 50%;
 }
-.buyer { background-color: #CBCFD0; }
-.seller { background-color: #5DC15D;}
-.provider { background-color: #8A99D3;}
-.shipper { background-color: #9CF2C5;}
-.finance { background-color: #95DAEE;}
+.student { background-color: #EFCEDC; }
+.registrar { background-color: rgb(230, 238, 230);}
+.cashier { background-color: #8A99D3;}
 .messagePane{
 	height: 3.5em;
 	margin-left: 0px;

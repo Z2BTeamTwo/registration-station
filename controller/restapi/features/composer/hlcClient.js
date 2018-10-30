@@ -22,7 +22,6 @@ const config = require('../../../env.json');
 const NS = 'org.acme.Z2BTestNetwork';
 let itemTable = null;
 const svc = require('./Z2B_Services');
-const financeCoID = 'easymoney@easymoneyinc.com';
 let bRegistered = false;
 
 /**
@@ -36,11 +35,11 @@ let bRegistered = false;
  * @returns {Array} an array of assets
  * @function
  */
-exports.getMyOrders = function (req, res, next) {
+exports.getMyCourses = function (req, res, next) {
     // connect to the network
-    let method = 'getMyOrders';
+    let method = 'getMyCourses';
     console.log(method+' req.body.userID is: '+req.body.userID );
-    let allOrders = new Array();
+    let allCourses = new Array();
     let businessNetworkConnection;
     if (svc.m_connection === null) {svc.createMessageSocket();}
     let ser;
@@ -57,21 +56,21 @@ exports.getMyOrders = function (req, res, next) {
         console.log(method+' req.body.userID is: '+req.body.userID );
         return businessNetworkConnection.connect(req.body.userID)
         .then(() => {
-            return businessNetworkConnection.query('selectOrders')
-            .then((orders) => {
-                allOrders = new Array();
-                for (let each in orders)
+            return businessNetworkConnection.query('selectCourses')
+            .then((courses) => {
+                allCourses = new Array();
+                for (let each in courses)
                     { (function (_idx, _arr)
                         {
                         let _jsn = ser.toJSON(_arr[_idx]);
-                        _jsn.id = _arr[_idx].orderNumber;
-                        allOrders.push(_jsn);
-                    })(each, orders);
+                        _jsn.id = _arr[_idx].courseCode;
+                        allCourses.push(_jsn);
+                    })(each, courses);
                 }
-                res.send({'result': 'success', 'orders': allOrders});
+                res.send({'result': 'success', 'courses': allCourses});
             })
-            .catch((error) => {console.log('selectOrders failed ', error);
-                res.send({'result': 'failed', 'error': 'selectOrders: '+error.message});
+            .catch((error) => {console.log('selectCourses failed ', error);
+                res.send({'result': 'failed', 'error': 'selectCourses: '+error.message});
             });
         })
         .catch((error) => {console.log('businessNetwork connect failed ', error);
@@ -103,34 +102,27 @@ exports.getItemTable = function (req, res, next)
 };
 
 /**
- * orderAction - act on an order for a buyer
+ * courseAction - act on an coursse for a student
  * @param {express.req} req - the inbound request object from the client
  * req.body.action - string with buyer requested action
- * buyer available actions are:
- * Pay  - approve payment for an order
- * Dispute - dispute an existing order. requires a reason
+ * student available actions are:
+ * Create  - create a course
+ * Register - register for a course
  * Purchase - submit created order to seller for execution
  * Cancel - cancel an existing order
- * req.body.participant - string with buyer id
- * req.body.orderNo - string with orderNo to be acted upon
- * req.body.reason - reason for dispute, required for dispute processing to proceed
+ * req.body.participant - string with student id
+ * req.body.courseCode - string with courseCode to be acted upon
  * @param {express.res} res - the outbound response object for communicating back to client
  * @param {express.next} next - an express service to enable post processing prior to responding to the client
  * @returns {Array} an array of assets
  * @function
  */
-exports.orderAction = function (req, res, next) {
-    let method = 'orderAction';
+exports.courseAction = function (req, res, next) {
+    let method = 'courseAction';
     console.log(method+' req.body.participant is: '+req.body.participant );
-    if ((req.body.action === 'Dispute') && (typeof(req.body.reason) !== 'undefined') && (req.body.reason.length > 0) )
-    {/*let reason = req.body.reason;*/}
-    else {
-        if ((req.body.action === 'Dispute') && ((typeof(req.body.reason) === 'undefined') || (req.body.reason.length <1) ))
-            {res.send({'result': 'failed', 'error': 'no reason provided for dispute'});}
-    }
     if (svc.m_connection === null) {svc.createMessageSocket();}
     let businessNetworkConnection;
-    let updateOrder;
+    let updateCourse;
     businessNetworkConnection = new BusinessNetworkConnection();
     //
     // v0.14
@@ -139,122 +131,101 @@ exports.orderAction = function (req, res, next) {
     // v0.15
     return businessNetworkConnection.connect(req.body.participant)
     .then(() => {
-        return businessNetworkConnection.getAssetRegistry(NS+'.Order')
+        return businessNetworkConnection.getAssetRegistry(NS+'.Course')
         .then((assetRegistry) => {
-            return assetRegistry.get(req.body.orderNo)
-            .then((order) => {
+            return assetRegistry.get(req.body.courseCode)
+            .then((course) => {
                 let factory = businessNetworkConnection.getBusinessNetwork().getFactory();
-                order.status = req.body.action;
+                course.status = req.body.action;
                 switch (req.body.action)
                 {
-                case 'Pay':
-                    console.log('Pay entered');
-                    updateOrder = factory.newTransaction(NS, 'Pay');
-                    updateOrder.financeCo = factory.newRelationship(NS, 'FinanceCo', financeCoID);
-                    updateOrder.seller = factory.newRelationship(NS, 'Seller', order.seller.$identifier);
+                case 'RegisterCourse':
+                    console.log('Course registration entered');
+                    updateCourse = factory.newTransaction(NS, 'RegisterCourse');
+                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', 'registrar@waketech.edu');
+                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
+                    console.log('Register update course', updateCourse);
                     break;
-                case 'Dispute':
-                    console.log('Dispute entered');
-                    updateOrder = factory.newTransaction(NS, 'Dispute');
-                    updateOrder.financeCo = factory.newRelationship(NS, 'FinanceCo', financeCoID);
-                    updateOrder.buyer = factory.newRelationship(NS, 'Buyer', order.buyer.$identifier);
-                    updateOrder.seller = factory.newRelationship(NS, 'Seller', order.seller.$identifier);
-                    updateOrder.dispute = req.body.reason;
+                case 'DropCourse':
+                    console.log('Course drop entered');
+                    updateCourse = factory.newTransaction(NS, 'DropCourse');
+                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
+                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
+                    console.log('req.body', req.body);
+                    console.log('course', course);
+                    console.log('updateCourse', updateCourse);
                     break;
-                case 'Purchase':
-                    console.log('Purchase entered');
-                    updateOrder = factory.newTransaction(NS, 'Buy');
-                    updateOrder.buyer = factory.newRelationship(NS, 'Buyer', order.buyer.$identifier);
-                    updateOrder.seller = factory.newRelationship(NS, 'Seller', order.seller.$identifier);
+                case 'AcceptRegistrationStatus':
+                    console.log('Accept Registration Status entered');
+                    updateCourse = factory.newTransaction(NS, 'AcceptRegistrationStatus');
+                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
+                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
+                    updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
+                    updateCourse.registrationStatus = req.body.registrationStatus;
                     break;
-                case 'Order From Supplier':
-                    console.log('Order from Supplier entered for '+order.orderNumber+ ' inbound id: '+ req.body.participant+' with order.seller as: '+order.seller.$identifier);
-                    updateOrder = factory.newTransaction(NS, 'OrderFromSupplier');
-                    updateOrder.provider = factory.newRelationship(NS, 'Provider', req.body.provider);
-                    updateOrder.seller = factory.newRelationship(NS, 'Seller', order.seller.$identifier);
+                case 'DenyRegistrationStatus':
+                    console.log('Deny Registration Status entered');
+                    updateCourse = factory.newTransaction(NS, 'DenyRegistrationStatus');
+                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
+                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
+                    console.log('reason', req.body.reason);
+                    updateCourse.reasonForRejection = req.body.reason;
                     break;
-                case 'Request Payment':
-                    console.log('Request Payment entered');
-                    updateOrder = factory.newTransaction(NS, 'RequestPayment');
-                    updateOrder.seller = factory.newRelationship(NS, 'Seller', order.seller.$identifier);
-                    updateOrder.financeCo = factory.newRelationship(NS, 'FinanceCo', financeCoID);
+                case 'ForwardRegistrationStatus':
+                    console.log('Forward Registration Status entered');
+                    updateCourse = factory.newTransaction(NS, 'ForwardRegistrationStatus');
+                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
+                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
+                    updateCourse.cashier = factory.newRelationship(NS, 'Cashier', req.body.cashier);
                     break;
-                case 'Refund':
-                    console.log('Refund Payment entered');
-                    updateOrder = factory.newTransaction(NS, 'Refund');
-                    updateOrder.seller = factory.newRelationship(NS, 'Seller', order.seller.$identifier);
-                    updateOrder.financeCo = factory.newRelationship(NS, 'FinanceCo', financeCoID);
-                    updateOrder.refund = req.body.reason;
+                case 'CancelCourse':
+                    console.log('Cancel course entered');
+                    updateCourse = factory.newTransaction(NS, 'CancelCourse');
+                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
+                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
+                    updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
+                    updateCourse.reasonForCancellation = req.body.reason;
                     break;
-                case 'Resolve':
-                    console.log('Resolve entered');
-                    updateOrder = factory.newTransaction(NS, 'Resolve');
-                    updateOrder.buyer = factory.newRelationship(NS, 'Buyer', order.buyer.$identifier);
-                    updateOrder.shipper = factory.newRelationship(NS, 'Shipper', order.shipper.$identifier);
-                    updateOrder.provider = factory.newRelationship(NS, 'Provider', order.provider.$identifier);
-                    updateOrder.seller = factory.newRelationship(NS, 'Seller', order.seller.$identifier);
-                    updateOrder.financeCo = factory.newRelationship(NS, 'FinanceCo', financeCoID);
-                    updateOrder.resolve = req.body.reason;
+                case 'RequestTuition':
+                    // to be completed for cashier
                     break;
-                case 'Request Shipping':
-                    console.log('Request Shipping entered');
-                    updateOrder = factory.newTransaction(NS, 'RequestShipping');
-                    updateOrder.shipper = factory.newRelationship(NS, 'Shipper', req.body.shipper);
-                    updateOrder.provider = factory.newRelationship(NS, 'Provider', order.provider.$identifier);
+                case 'PayTuition':
+                    console.log('Pay Tuition entered');
+                    updateCourse = factory.newTransaction(NS, 'PayTuition');
+                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifer);
+                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifer);
+                    updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifer);
+                    updateCourse.amountPaid = parseFloat(req.body.amount);
                     break;
-                case 'Update Delivery Status':
-                    console.log('Update Delivery Status');
-                    updateOrder = factory.newTransaction(NS, 'Delivering');
-                    updateOrder.shipper = factory.newRelationship(NS, 'Shipper', req.body.participant);
-                    updateOrder.deliveryStatus = req.body.delivery;
-                    break;
-                case 'Delivered':
-                    console.log('Delivered entered');
-                    updateOrder = factory.newTransaction(NS, 'Deliver');
-                    updateOrder.shipper = factory.newRelationship(NS, 'Shipper', req.body.participant);
-                    break;
-                case 'BackOrder':
-                    console.log('BackOrder entered');
-                    updateOrder = factory.newTransaction(NS, 'BackOrder');
-                    updateOrder.backorder = req.body.reason;
-                    updateOrder.provider = factory.newRelationship(NS, 'Provider', order.provider.$identifier);
-                    updateOrder.backorder = req.body.reason;
-                    break;
-                case 'Authorize Payment':
-                    console.log('Authorize Payment entered');
-                    updateOrder = factory.newTransaction(NS, 'AuthorizePayment');
-                    updateOrder.buyer = factory.newRelationship(NS, 'Buyer', order.buyer.$identifier);
-                    updateOrder.financeCo = factory.newRelationship(NS, 'FinanceCo', financeCoID);
-                    break;
-                case 'Cancel':
-                    console.log('Cancel entered');
-                    updateOrder = factory.newTransaction(NS, 'OrderCancel');
-                    updateOrder.buyer = factory.newRelationship(NS, 'Buyer', order.buyer.$identifier);
-                    updateOrder.seller = factory.newRelationship(NS, 'Seller', order.seller.$identifier);
+                case 'RefundTuition':
+                    // console.log('Update Delivery Status');
+                    // updateOrder = factory.newTransaction(NS, 'Delivering');
+                    // updateOrder.shipper = factory.newRelationship(NS, 'Shipper', req.body.participant);
+                    // updateOrder.deliveryStatus = req.body.delivery;
                     break;
                 default :
                     console.log('default entered for action: '+req.body.action);
-                    res.send({'result': 'failed', 'error':' order '+req.body.orderNo+' unrecognized request: '+req.body.action});
+                    res.send({'result': 'failed', 'error':' course '+req.body.courseNo+' unrecognized request: '+req.body.action});
                 }
-                updateOrder.order = factory.newRelationship(NS, 'Order', order.$identifier);
-                return businessNetworkConnection.submitTransaction(updateOrder)
+                updateCourse.course = factory.newRelationship(NS, 'Course', course.$identifier);
+                return businessNetworkConnection.submitTransaction(updateCourse)
                 .then(() => {
-                    console.log(' order '+req.body.orderNo+' successfully updated to '+req.body.action);
-                    res.send({'result': ' order '+req.body.orderNo+' successfully updated to '+req.body.action});
+                    console.log(' course '+req.body.courseCode+' successfully updated to '+req.body.action);
+                    res.send({'result': ' course '+req.body.courseCode+' successfully updated to '+req.body.action});
                 })
                 .catch((error) => {
                     if (error.message.search('MVCC_READ_CONFLICT') !== -1)
-                        {console.log(' retrying assetRegistry.update for: '+req.body.orderNo);
-                        svc.loadTransaction(req.app.locals, updateOrder, req.body.orderNo, businessNetworkConnection);
+                        {console.log(' retrying assetRegistry.update for: '+req.body.courseCode);
+                        svc.loadTransaction(req.app.locals, updateCourse, req.body.courseCode, businessNetworkConnection);
                     }
                     else
-                    {console.log(req.body.orderNo+' submitTransaction to update status to '+req.body.action+' failed with text: ',error.message);}
+                    {console.log(req.body.courseCode+' submitTransaction to update status to '+req.body.action+' failed with text: ',error.message);}
                 });
 
             })
             .catch((error) => {
-                console.log('Registry Get Order failed: '+error.message);
-                res.send({'result': 'failed', 'error': 'Registry Get Order failed: '+error.message});
+                console.log('Registry Get Course failed: '+error.message);
+                res.send({'result': 'failed', 'error': 'Registry Get Course failed: '+error.message});
             });
         })
         .catch((error) => {console.log('Get Asset Registry failed: '+error.message);
@@ -277,13 +248,15 @@ exports.orderAction = function (req, res, next) {
  * @returns {Array} an array of assets
  * @function
  */
-exports.addOrder = function (req, res, next) {
-    let method = 'addOrder';
-    console.log(method+' req.body.buyer is: '+req.body.buyer );
+exports.addCourse = function (req, res, next) {
+    let method = 'addCourse';
+    console.log(method+' req.body.student is: '+req.body.student );
+    // console.log(req.body.course);
     let businessNetworkConnection;
     let factory;
     let ts = Date.now();
-    let orderNo = req.body.buyer.replace(/@/, '').replace(/\./, '')+ts;
+    let courseData = JSON.parse(req.body.course);
+    let courseCode= courseData.baseCourseCode + req.body.student.replace(/@/, '').replace(/\./, '')+ts;
     if (svc.m_connection === null) {svc.createMessageSocket();}
     businessNetworkConnection = new BusinessNetworkConnection();
     //
@@ -291,71 +264,63 @@ exports.addOrder = function (req, res, next) {
     // return businessNetworkConnection.connect(config.composer.connectionProfile, config.composer.network, req.body.buyer, req.body.secret)
     //
     // v0.15
-    return businessNetworkConnection.connect(req.body.buyer)
+    return businessNetworkConnection.connect(req.body.student)
     .then(() => {
         factory = businessNetworkConnection.getBusinessNetwork().getFactory();
-        let order = factory.newResource(NS, 'Order', orderNo);
-        order = svc.createOrderTemplate(order);
-        order.amount = 0;
-        order.orderNumber = orderNo;
-        order.buyer = factory.newRelationship(NS, 'Buyer', req.body.buyer);
-        order.seller = factory.newRelationship(NS, 'Seller', req.body.seller);
-        order.provider = factory.newRelationship(NS, 'Provider', 'noop@dummy');
-        order.shipper = factory.newRelationship(NS, 'Shipper', 'noop@dummy');
-        order.financeCo = factory.newRelationship(NS, 'FinanceCo', financeCoID);
-        for (let each in req.body.items)
-        {(function(_idx, _arr)
-            {   _arr[_idx].description = _arr[_idx].itemDescription;
-            order.items.push(JSON.stringify(_arr[_idx]));
-            order.amount += parseInt(_arr[_idx].extendedPrice);
-        })(each, req.body.items);
-        }
-        // create the buy transaction
-        const createNew = factory.newTransaction(NS, 'CreateOrder');
+        let course = factory.newResource(NS, 'Course', courseCode);
+        course = svc.createCourseTemplate(course);
+        course.amountDue = courseData.creditHours * 100;
+        course.courseCode = courseCode;
+        course.creditHours = courseData.creditHours;
+        course.courseTitle = courseData.courseTitle;
+        course.student = factory.newRelationship(NS, 'Student', req.body.student);
+        course.registrar = factory.newRelationship(NS, 'Registrar', 'noop@dummy');
+        course.cashier = factory.newRelationship(NS, 'Cashier', 'noop@dummy');
+        
+        // create the create order transaction
+        const createNew = factory.newTransaction(NS, 'CreateCourse');
 
-        createNew.order = factory.newRelationship(NS, 'Order', order.$identifier);
-        createNew.buyer = factory.newRelationship(NS, 'Buyer', req.body.buyer);
-        createNew.seller = factory.newRelationship(NS, 'Seller', req.body.seller);
-        createNew.financeCo = factory.newRelationship(NS, 'FinanceCo', financeCoID);
-        createNew.amount = order.amount;
+        createNew.course = factory.newRelationship(NS, 'Course', course.$identifier);
+        createNew.student = factory.newRelationship(NS, 'Student', req.body.student);
+        createNew.amount = course.amountDue;
         // add the order to the asset registry.
-        return businessNetworkConnection.getAssetRegistry(NS+'.Order')
+        return businessNetworkConnection.getAssetRegistry(NS+'.Course')
         .then((assetRegistry) => {
-            return assetRegistry.add(order)
+            return assetRegistry.add(course)
                 .then(() => {
                     return businessNetworkConnection.submitTransaction(createNew)
-                    .then(() => {console.log(' order '+orderNo+' successfully added');
-                        res.send({'result': ' order '+orderNo+' successfully added'});
+                    .then(() => {console.log(' course '+courseCode+' successfully added');
+                        res.send({'result': ' course '+courseCode+' successfully added'});
                     })
                     .catch((error) => {
                         if (error.message.search('MVCC_READ_CONFLICT') !== -1)
-                            {console.log(orderNo+' retrying assetRegistry.add for: '+orderNo);
-                            svc.loadTransaction(req.app.locals, createNew, orderNo, businessNetworkConnection);
+                            {console.log(courseCode+' retrying assetRegistry.add for: '+courseCode);
+                            svc.loadTransaction(req.app.locals, createNew, courseCode, businessNetworkConnection);
                         }
                         else
-                        {console.log(orderNo+' submitTransaction failed with text: ',error.message);}
+                        {console.log(courseCode+' submitTransaction failed with text: ',error.message);}
                     });
                 })
                 .catch((error) => {
                     if (error.message.search('MVCC_READ_CONFLICT') !== -1)
-                        {console.log(orderNo+' retrying assetRegistry.add for: '+orderNo);
-                        svc.loadTransaction(req.app.locals, createNew, orderNo, businessNetworkConnection);
+                        {console.log(courseCode+' retrying assetRegistry.add for: '+courseCode);
+                        svc.loadTransaction(req.app.locals, createNew, courseCode, businessNetworkConnection);
                     }
                     else
                     {
-                        console.log(orderNo+' assetRegistry.add failed: ',error.message);
-                        res.send({'result': 'failed', 'error':' order '+orderNo+' getAssetRegistry failed '+error.message});
+                        console.log(courseCode+' assetRegistry.add failed: ',error.message);
+                        res.send({'result': 'failed', 'error':' course '+courseCode+' getAssetRegistry failed '+error.message});
                     }
                 });
         })
         .catch((error) => {
-            console.log(orderNo+' getAssetRegistry failed: ',error.message);
-            res.send({'result': 'failed', 'error':' order '+orderNo+' getAssetRegistry failed '+error.message});
+            console.log(courseCode+' getAssetRegistry failed: ',error.message);
+            res.send({'result': 'failed', 'error':' course '+courseCode+' getAssetRegistry failed '+error.message});
         });
     })
     .catch((error) => {
-        console.log(method + ' : '+orderNo+' business network connection failed: text',error.message);
-        res.send({'result': 'failed', 'error':' order '+orderNo+' add failed on on business network connection '+error.message});
+        console.log(method + ' : '+courseCode+' business network connection failed: text',error.message);
+        res.send({'result': 'failed', 'error':' course '+courseCode+' add failed on on business network connection '+error.message});
     });
 };
 /**
@@ -368,13 +333,13 @@ exports.addOrder = function (req, res, next) {
 function _monitor(locals, _event)
 {
     let method = '_monitor';
-    console.log(method+ ' _event received: '+_event.$type+' for Order: '+_event.orderID);
+    console.log(method+ ' _event received: '+_event.$type+' for course: '+_event.courseCode);
     // create an event object and give it the event type, the orderID, the buyer id and the eventID
     // send that event back to the requestor
     let event = {};
     event.type = _event.$type;
-    event.orderID = _event.orderID;
-    event.ID = _event.buyerID;
+    event.courseCode = _event.courseCode;
+    event.ID = _event.studentID;
     svc.send(locals, 'Alert',JSON.stringify(event));
 
     // using switch/case logic, send events back to each participant who should be notified. 
@@ -387,8 +352,8 @@ function _monitor(locals, _event)
     {
     case 'Created':
         break;
-    case 'Bought':
-    case 'PaymentRequested':
+    case 'Registered':
+    case 'RegistrationStatusAccepted':
         event.ID = _event.sellerID;
         svc.send(locals, 'Alert',JSON.stringify(event));
         event.ID = _event.financeCoID;

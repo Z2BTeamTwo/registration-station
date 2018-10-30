@@ -29,8 +29,6 @@ const hlc_idCard = require('composer-common').IdCard;
 
 const AdminConnection = require('composer-admin').AdminConnection;
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
-const financeCoID = 'easymoney@easymoneyinc.com';
-
 
 const svc = require('./Z2B_Services');
 const config = require('../../../env.json');
@@ -85,7 +83,7 @@ let adminConnection = new AdminConnection();
                     {
                     // the participant registry is where member information is first stored
                     // there are individual registries for each type of participant, or member.
-                    // In our case, that is Buyer, Seller, Provider, Shipper, FinanceCo
+                    // In our case, that is Student, Registrar, Cashier
                     return businessNetworkConnection.getParticipantRegistry(config.composer.NS+'.'+_arr[_idx].type)
                     .then(function(participantRegistry){
                         return participantRegistry.get(_arr[_idx].id)
@@ -95,11 +93,11 @@ let adminConnection = new AdminConnection();
                         })
                         .catch((error) => {
                             participant = factory.newResource(config.composer.NS, _arr[_idx].type, _arr[_idx].id);
-                            participant.companyName = _arr[_idx].companyName;
+                            participant.participantName = _arr[_idx].participantName;
                             participantRegistry.add(participant)
                             .then(() => {
-                                console.log('['+_idx+'] '+_arr[_idx].companyName+' successfully added');
-                                svc.send(req.app.locals, 'Message', '['+_idx+'] '+_arr[_idx].companyName+' successfully added');
+                                console.log('['+_idx+'] '+_arr[_idx].participantName+' successfully added');
+                                svc.send(req.app.locals, 'Message', '['+_idx+'] '+_arr[_idx].participantName+' successfully added');
                             })
                             .then(() => {
                                 // an identity is required before a member can take action in the network.
@@ -136,14 +134,14 @@ let adminConnection = new AdminConnection();
                                     console.error('create id for '+_arr[_idx].id+'failed. ',error.message);
                                 });
                             })
-                        .catch((error) => {console.log(_arr[_idx].companyName+' add failed',error.message);});
+                        .catch((error) => {console.log(_arr[_idx].participantName+' add failed',error.message);});
                         });
                     })
                 .catch((error) => {console.log('error with getParticipantRegistry', error.message);});
                 })(each, startupFile.members);
             }
             // iterate through the order objects in the memberList.json file.
-            for (let each in startupFile.items){(function(_idx, _arr){itemTable.push(_arr[_idx]);})(each, startupFile.items);}
+            for (let each in startupFile.classes){(function(_idx, _arr){itemTable.push(_arr[_idx]);})(each, startupFile.classes);}
             svc.saveItemTable(itemTable);
             for (let each in startupFile.assets)
                 {(function(_idx, _arr)
@@ -155,14 +153,12 @@ let adminConnection = new AdminConnection();
                         return assetRegistry.get(_arr[_idx].id)
                         .then((_res) => {
                             console.log('['+_idx+'] order with id: '+_arr[_idx].id+' already exists in Registry '+config.composer.NS+'.'+_arr[_idx].type);
-                            svc.send(req.app.locals, 'Message', '['+_idx+'] order with id: '+_arr[_idx].id+' already exists in Registry '+config.composer.NS+'.'+_arr[_idx].type);
+                            svc.send(req.app.locals, 'Message', '['+_idx+'] course with id: '+_arr[_idx].id+' already exists in Registry '+config.composer.NS+'.'+_arr[_idx].type);
                         })
                         .catch((error) => {
-                            // first, an Order Object is created
-                            let order = factory.newResource(config.composer.NS, _arr[_idx].type, _arr[_idx].id);
-                            order = svc.createOrderTemplate(order);
-                            let _tmp = svc.addItems(_arr[_idx], itemTable);
-                            order.items = _tmp.items;
+                            // first, an Course Object is created
+                            let course = factory.newResource(config.composer.NS, _arr[_idx].type, _arr[_idx].id);
+                            course = svc.createCourseTemplate(course);
                             order.amount = _tmp.amount;
                             order.orderNumber = _arr[_idx].id;
                             // then the buy transaction is created
@@ -178,11 +174,11 @@ let adminConnection = new AdminConnection();
                             createNew.seller = factory.newRelationship(config.composer.NS, 'Seller', _arr[_idx].seller);
                             createNew.amount = order.amount;
                             // then the order is added to the asset registry.
-                            return assetRegistry.add(order)
+                            return assetRegistry.add(course)
                             .then(() => {
-                                // then a createOrder transaction is processed which uses the chaincode
+                                // then a createCourse transaction is processed which uses the chaincode
                                 // establish the order with it's initial transaction state.
-                                svc.loadTransaction(req.app.locals, createNew, order.orderNumber, businessNetworkConnection);
+                                svc.loadTransaction(req.app.locals, createNew, course.courseCode, businessNetworkConnection);
                             })
                             .catch((error) => {
                                 // in the development environment, because of how timing is set up, it is normal to
@@ -190,7 +186,7 @@ let adminConnection = new AdminConnection();
                                 // logical transaction error.
                                 if (error.message.search('MVCC_READ_CONFLICT') !== -1)
                                 {console.log('AL: '+_arr[_idx].id+' retrying assetRegistry.add for: '+_arr[_idx].id);
-                                svc.addOrder(req.app.locals, order, assetRegistry, createNew, businessNetworkConnection);
+                                    svc.addOrder(req.app.locals, course, assetRegistry, createNew, businessNetworkConnection);
                                 }
                                 else {console.log('error with assetRegistry.add', error.message);}
                             });
@@ -222,8 +218,8 @@ exports.getMemberSecret = function(req, res, next)
 {
     let newFile = path.join(path.dirname(require.main.filename),'startup','memberList.txt');
     let _table = JSON.parse(fs.readFileSync(newFile));
-    let bFound = false;
+    let sFound = false;
     for (let each in _table.members)
-        { if (_table.members[each].id === req.body.id) {res.send(_table.members[each]); bFound = true;}}
-    if (!bFound) {res.send({'id': req.body.id, 'secret': 'not found'});}
+        { if (_table.members[each].id === req.body.id) {res.send(_table.members[each]); sFound = true;}}
+    if (!sFound) {res.send({'id': req.body.id, 'secret': 'not found'});}
 };

@@ -58,23 +58,20 @@ function singleUX ()
 function memberLoad ()
 {
     let options = {};
-    options.registry = 'Seller';
+    options.registry = 'Student';
     let options2 = {};
-    options2.registry = 'Buyer';
+    options2.registry = 'Registrar';
     let options3 = {};
-    options3.registry = 'Provider';
-    let options4 = {};
-    options4.registry = 'Shipper';
+    options3.registry = 'Cashier';
     $.when($.post('/composer/admin/getMembers', options), $.post('/composer/admin/getMembers', options2),
-        $.post('/composer/admin/getMembers', options3), $.post('/composer/admin/getMembers', options4)).done(function (_sellers, _buyers, _providers, _shippers)
+        $.post('/composer/admin/getMembers', options3)).done(function (_students, _registrars, _cashiers)
         {
-        buyers = dropDummy(_buyers[0].members);
-        sellers = dropDummy(_sellers[0].members);
-        providers = dropDummy(_providers[0].members);
-        shippers = dropDummy(_shippers[0].members);
-        s_string = _getMembers(sellers);
-        p_string = _getMembers(providers);
-        sh_string = _getMembers(shippers);
+        students = _students[0].members;
+        registrars = _registrars[0].members;
+        cashiers = dropDummy(_cashiers[0].members);
+        students_string = _getMembers(students);
+        registrars_string = _getMembers(registrars);
+        cashiers_string = _getMembers(cashiers);
 
         });
 }
@@ -96,23 +93,20 @@ function deferredMemberLoad()
 {
     let d_prompts = $.Deferred();
     let options = {};
-    options.registry = 'Seller';
+    options.registry = 'Student';
     let options2 = {};
-    options2.registry = 'Buyer';
+    options2.registry = 'Cashier';
     let options3 = {};
-    options3.registry = 'Provider';
-    let options4 = {};
-    options4.registry = 'Shipper';
+    options3.registry = 'Registrar';
     $.when($.post('/composer/admin/getMembers', options), $.post('/composer/admin/getMembers', options2),
-        $.post('/composer/admin/getMembers', options3), $.post('/composer/admin/getMembers', options4)).done(function (_sellers, _buyers, _providers, _shippers)
+        $.post('/composer/admin/getMembers', options3)).done(function (_students, _cashiers, _registrars)
         {
-            buyers = dropDummy(_buyers[0].members);
-            sellers = dropDummy(_sellers[0].members);
-            providers = dropDummy(_providers[0].members);
-            shippers = dropDummy(_shippers[0].members);
-            s_string = _getMembers(sellers);
-            p_string = _getMembers(providers);
-            sh_string = _getMembers(shippers);
+            students = dropDummy(_students[0].members);
+            registrars = dropDummy(_registrars[0].members);
+            cashiers = dropDummy(_cashiers[0].members);
+            students_string = _getMembers(students);
+            registrars_string = _getMembers(registrars);
+            cashiers_string = _getMembers(cashiers);
             d_prompts.resolve();
         }).fail(d_prompts.reject);
     return d_prompts.promise();
@@ -151,25 +145,17 @@ function addNotification(_event, _id, _orderID)
     if (type === 'none') {return;}
     switch(type)
     {
-    case 'Buyer':
-        b_alerts.push({'event': _event, 'order': _orderID});
-        toggleAlert(b_notify, b_alerts, b_count);
+    case 'Student':
+        student_alerts.push({'event': _event, 'course': _courseCode});
+        toggleAlert(student_notify, student_alerts, student_count);
         break;
-    case 'Seller':
-        s_alerts.push({'event': _event, 'order': _orderID});
-        toggleAlert(s_notify, s_alerts, s_count);
+    case 'Registrar':
+        registrar_alerts.push({'event': _event, 'course': _courseCode});
+        toggleAlert(registrar_notify, registrar_alerts, registrar_count);
         break;
-    case 'Provider':
-        p_alerts.push({'event': _event, 'order': _orderID});
-        toggleAlert(p_notify, p_alerts, p_count);
-        break;
-    case 'Shipper':
-        sh_alerts.push({'event': _event, 'order': _orderID});
-        toggleAlert(sh_notify, sh_alerts, sh_count);
-        break;
-    case 'FinanceCo':
-        f_alerts.push({'event': _event, 'order': _orderID});
-        toggleAlert(f_notify, f_alerts, f_count);
+    case 'Cashier':
+        cashier_alerts.push({'event': _event, 'course': _courseCode});
+        toggleAlert(cashier_notify, cashier_alerts, cashier_count);
         break;
     default:
         console.log(method+' default entered for: '+type);

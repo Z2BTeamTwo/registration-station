@@ -1,11 +1,11 @@
 {
     "index": {"language": "US English",
-      "title": "Z2B Chapter 5",
-      "header": "Chapter 5: Building the Administration User Experience",
-      "titleBar": "Zero to Blockchain Tutorial",
+      "title": "Registration Station",
+      "header": "Student",
+      "titleBar": "Registration Station",
       "idx_unified": "load Unified User Experience",
-      "idx_buyer": "load Buyer User Experience",
-      "idx_seller": "load Seller User Experience",
+      "idx_student": "load Student User Experience",
+      "idx_registrar": "load Registrar User Experience",
       "idx_provider": "load Provider User Experience",
       "idx_shipper": "load Shipper User Experience",
       "idx_financeco": "load Finance Company User Experience",
@@ -15,7 +15,7 @@
       "idx_preload": "Preload Network"
     },
     "admin": {
-      "title": "Zero To Blockchain Chapter 5",
+      "title": "Registration - Admin",
       "npm": "Network Profile Management",
       "npm_API": "API",
       "npm_param": "Parameters",
@@ -67,10 +67,10 @@
       "bc_gh_api": "get Historian",
       "bc_gh_param": "(none)"
     },
-    "buyer": {
-      "title": "Buyer Chapter 5. Select Buyer to see their view: ",
-      "newOrder": "Create New Order",
-      "orderStatus": "Display Order Status"
+    "student": {
+      "title": "Registration Station - Student",
+      "newCourse": "Create New Course",
+      "courseStatus": "Display Course Status"
     },
     "createConnectionProfile": {
       "title": "type the name of the new profile here: ",
@@ -92,37 +92,30 @@
     },
     "createMember": {
       "cd_type": "Type",
-      "cd_buyer": "Buyer",
-      "cd_seller": "Seller",
-      "cd_shipper": "Shipper",
-      "cd_provider": "Provider",
-      "cd_financeco": "FinanceCo",
-      "cd_cn": "Company Name",
+      "cd_student": "Student",
+      "cd_registrar": "Registrar",
+      "cd_cashier": "Cashier",
+      "cd_cn": "Participant Name",
       "cd_e": "email Address",
       "cancel": "Cancel",
       "submit": "Submit"
     },
-    "createOrder": {
-      "title": "Create New Order",
-      "selectVendor": "Select Vendor: ",
-      "cn_on": "Order Number",
+    "createCourse": {
+      "title": "Create New Course",
+      "cn_on": "Course Code",
       "cn_status": "Status",
       "cn_date": "Date",
+      "cn_title": "Course Title",
+      "cn_sched": "Course Schedule",
+      "cn_hours": "Credit Hours",
       "cn_total": "Total",
-      "cn_selectItem": "Select Item",
-      "addItem": "Add Item",
-      "cancelNewOrder": "Cancel",
-      "submitNewOrder": "Submit"
+      "cancelNewCourse": "Cancel",
+      "submitNewCourse": "Submit"
     },
     "deleteConnectionProfile": {
       "title": "Select Profile to delete: ",
       "cancel": "Cancel",
       "submit": "Submit"
-    },
-    "financeCo": {
-      "title": "Zero To Blockchain Chapter 5: The Global Financier",
-      "financeCOclear": "Clear Window",
-      "financeCOorderStatus": "Display Order Status"
     },
     "getMemberSecret": {
       "gs_type": "Type",
@@ -142,82 +135,48 @@
     "removeMember": {
       "rm_type": "Type",
       "rm_members": "Members",
-      "rm_company": "Company Name",
+      "rm_company": "Participant Name",
       "rm_email": "email Address",
       "rm_userID": "userID",
       "rm_secret": "secret",
       "cancel": "Cancel",
       "submit": "Submit"
     },
-    "seller": {
-      "title": "Seller Chapter 5, Select Seller to see their view: ",
-      "seller_clear": "Clear Window",
-      "sellerOrderStatus": "Display Order Status"
+    "registrar": {
+      "title": "Registrar View",
+      "registrar_clear": "Clear Window",
+      "registrarCourseStatus": "Display Order Status"
     },
-    "shipper": {
+    "cashier": {
       "title": "Shipper Chapter 5, Select Shipper to see their view: ",
       "shipper_clear": "Clear Window",
       "shipperOrderStatus": "Display Order Status    "
     },
     "singleUX": {},
-    "orderProcess": {
-      "AuthorizePayment": {"select": "AuthorizePayment", "message": "Authorize Payment"},
-      "Dispute": {"select": "Dispute", "message": "Dispute", "prompt": "Reason for Dispute: "},
-      "Resolve": {"select": "Resolve", "message": "Resolve", "prompt": "Reason for Resolution: "},
-      "Purchase": {"select": "Purchase", "message": "Purchase"},
-      "Cancel": {"select": "Cancel", "message": "Cancel"},
-      "Pay": {"select": "Pay", "message": "Pay"},
-      "RequestShipping": {"select": "Request Shipping", "message": "Request Shipping"},
-      "BackOrder": {"select": "BackOrder", "message": "BackOrder", "prompt": "Reason for Backorder: "},
-      "PayRequest": {"select": "PayRequest", "message": "Request Payment"},
-      "Refund": {"select": "Refund", "message": "Refund", "prompt": "Reason to Resolve or Refund: "},
-      "Delivered": {"select": "Delivered", "message": "Delivered"},
-      "Delivering": {"select": "Delivering", "message": "Update Delivery Status", "prompt": "Delivery Status: "},
-      "Order": {"select": "Order", "message": "Order From Supplier"},
+    "courseProcess": {
+      "Register": {"select": "RegisterCourse", "message": "Register"},
+      "Drop": {"select": "DropCourse", "message": "Drop"},
+      "AcceptRegistrationStatus": {"select": "AcceptRegistrationStatus", "message": "Accept Registration Status"},
+      "DenyRegistrationStatus": {"select": "DenyRegistrationStatus", "message": "Deny Registration Status", "prompt": "Reason: "},
+      "ForwardRegistrationStatus": {"select": "ForwardRegistrationStatus", "message": "Forward to Cashier"},
+      "CancelCourse": {"select": "CancelCourse", "message": "Cancel Course", "prompt": "Reason: "},
+      "RequestTuition": {"select": "RequestTuition", "message": "Request Tuition"},
+      "PayTuition": {"select": "PayTuition", "message": "Pay", "prompt": "Amount to Pay: "},
+      "RefundTuition": {"select": "RefundTuition", "message": "Refund", "prompt": "Amount to Refund:"},
       "NoAction": {"select": "NoAction", "message": "Take No Action"},
       "ex_button": "Execute",
       "ca_button": "Cancel",
-      "orderno": "Order #",
+      "courseCode": "Course ID",
       "status": "Status",
-      "total": "Total",
-      "seller": "Seller: ",
-      "itemno": "Item Number",
-      "description": "Description",
-      "qty": "Quantity",
-      "price": "Price",
-      "processing_msg": "Processing {0} request for order number: {1}",
-      "b_no_order_msg": "No orders for this buyer: ",
-      "s_no_order_msg": "No orders for this seller: ",
-      "p_no_order_msg": "No orders for this provider: ",
-      "sh_no_order_msg": "No orders for this shipper: ",
-      "create_msg": "Processing Create Order request",
-      "buyer": "Buyer: "
-    },
-    "financeCoOrder": {
-      "status": "Current Status: ",
-      "action": "Action",
-      "by": "By",
-      "date": "Date",
-      "comments": "Comments",
-      "created": "Created",
-      "cancelled": "Cancelled?",
-      "notCancel": "(not Cancelled)",
-      "purchased": "Purchased",
-      "noPurchase": "(no Purchase Request)",
-      "thirdParty": "3rd Party Order",
-      "nothirdParty": "(not yet sent to 3rd Party)",
-      "backordered": "Backordered?",
-      "notBackordered": "(not Backordered)",
-      "shippingRequested": "Shipping Requested",
-      "noRequestShip": "(No Request to Shipper)",
-      "shippingStarted": "Shipping Started",
-      "noDeliveryStart": "(Delivery not Started)",
-      "delivered": "Delivered",
-      "notDelivered": "(not yet Delivered)",
-      "payRequested": "Payment Requested",
-      "noRequest": "(no request for payment)",
-      "disputed": "Dispute Raised",
-      "noDispute": "(not in Dispute)"
+      "amountDue": "Amount Due",
+      "description": "Course Title",
+      "amountPaid": "Amount Paid",
+      "amountRefunded": "Amount Refunded",
+      "processing_msg": "Processing {0} request for course code: {1}",
+      "student_no_course_msg": "No courses for this student: ",
+      "registrar_cashier_no_course_msg": "No courses have been submitted for your review.",
+      "create_msg": "Processing Create Course request",
+      "student": "Student: "
     }
   }
   

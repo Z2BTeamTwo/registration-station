@@ -508,23 +508,17 @@ exports.getMembers = function(req, res, next) {
                         { (function (_idx, _arr)
                             { let _jsn = {};
                             _jsn.type = req.body.registry;
-                            _jsn.companyName = _arr[_idx].companyName;
+                            _jsn.participantName = _arr[_idx].participantName;
                             switch (req.body.registry)
                             {
-                            case 'Buyer':
-                                _jsn.id = _arr[_idx].buyerID;
+                            case 'Student':
+                                _jsn.id = _arr[_idx].studentID;
                                 break;
-                            case 'Seller':
-                                _jsn.id = _arr[_idx].sellerID;
+                            case 'Registrar':
+                                _jsn.id = _arr[_idx].registrarID;
                                 break;
-                            case 'Provider':
-                                _jsn.id = _arr[_idx].providerID;
-                                break;
-                            case 'Shipper':
-                                _jsn.id = _arr[_idx].shipperID;
-                                break;
-                            case 'FinanceCo':
-                                _jsn.id = _arr[_idx].financeCoID;
+                            case 'Cashier':
+                                _jsn.id = _arr[_idx].cashierID;
                                 break;
                             default:
                                 _jsn.id = _arr[_idx].id;
@@ -649,7 +643,7 @@ exports.issueIdentity = function(req, res, next) {
  */
 exports.getAssets = function(req, res, next) {
     // connect to the network
-    let allOrders = new Array();
+    let allCourses = new Array();
     let businessNetworkConnection;
     let serializer;
     let archiveFile = fs.readFileSync(path.join(path.dirname(require.main.filename),'network','dist','zerotoblockchain-network.bna'));
@@ -672,20 +666,20 @@ exports.getAssets = function(req, res, next) {
                                     {
                                     switch(req.body.type)
                                     {
-                                    case 'Buyer':
-                                        if (req.body.id === _arr[_idx].buyer.$identifier)
+                                    case 'Student':
+                                        if (req.body.id === _arr[_idx].student.$identifier)
                                         {
                                             let _jsn = serializer.toJSON(_arr[_idx]);
                                             _jsn.type = req.body.registry;
                                             switch (req.body.registry)
                                             {
-                                            case 'Order':
-                                                _jsn.id = _arr[_idx].orderNumber;
+                                            case 'Course':
+                                                _jsn.id = _arr[_idx].courseCode;
                                                 break;
                                             default:
                                                 _jsn.id = _arr[_idx].id;
                                             }
-                                            allOrders.push(_jsn);
+                                            allCourses.push(_jsn);
                                         }
                                         break;
                                     case 'admin':
@@ -693,20 +687,20 @@ exports.getAssets = function(req, res, next) {
                                         _jsn.type = req.body.registry;
                                         switch (req.body.registry)
                                         {
-                                        case 'Order':
-                                            _jsn.id = _arr[_idx].orderNumber;
+                                        case 'Course':
+                                            _jsn.id = _arr[_idx].courseCode;
                                             break;
                                         default:
                                             _jsn.id = _arr[_idx].id;
                                         }
-                                        allOrders.push(_jsn);
+                                        allCourses.push(_jsn);
                                         break;
                                     default:
                                         break;
                                     }
                                 })(each, members);
                             }
-                            res.send({'result': 'success', 'orders': allOrders});
+                            res.send({'result': 'success', 'courses': allCourses});
                         })
                         .catch((error) => {console.log('error with getAllOrders', error);
                             res.send({'result': 'failed', 'error': 'getAllOrders: '+error.message});
@@ -750,10 +744,10 @@ exports.addMember = function(req, res, next) {
             .catch((_res) => {
                 console.log(req.body.id+' not in '+req.body.type+' registry. ');
                 let participant = factory.newResource(NS, req.body.type,req.body.id);
-                participant.companyName = req.body.companyName;
+                participant.participantName = req.body.participantName;
                 participantRegistry.add(participant)
-                .then(() => {console.log(req.body.companyName+' successfully added'); res.send(req.body.companyName+' successfully added');})
-                .catch((error) => {console.log(req.body.companyName+' add failed',error); res.send(error);});
+                .then(() => {console.log(req.body.participantName+' successfully added'); res.send(req.body.participantName + ' successfully added');})
+                .catch((error) => {console.log(req.body.participantName+' add failed',error); res.send(error);});
             });
         })
         .catch((error) => {console.log('error with getParticipantRegistry', error); res.send(error);});

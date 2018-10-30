@@ -1,0 +1,24 @@
+/** Sample queries for Z2B FinanceCo business network
+*/
+
+query selectCourses {
+  description: "Select all Courses"
+  statement:
+      SELECT org.acme.Z2BTestNetwork.Course
+}
+
+query selectOrdersByStudent {
+  description: "Select all courses for a specific student"
+  statement:
+      SELECT org.acme.Z2BTestNetwork.Course
+          WHERE (student.studentID == _$id)
+}
+
+query selectOrdersByRegistrar {
+  description: "Select all courses for the registrar"
+  statement:
+      SELECT org.acme.Z2BTestNetwork.Course
+          WHERE (registrar.registrarID == _$id)
+}
+
+

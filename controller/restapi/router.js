@@ -93,3 +93,8 @@ router.post('/composer/admin/checkCard*', hlcAdmin.checkCard);
 router.post('/composer/admin/createCard*', hlcAdmin.createCard);
 router.post('/composer/admin/issueIdentity*', hlcAdmin.issueIdentity);
 
+// router requests specific to the Buyer
+router.get('/composer/client/getItemTable*', hlcClient.getItemTable);
+router.post('/composer/client/getMyCourses*', hlcClient.getMyCourses);
+router.post('/composer/client/addCourse*', hlcClient.addCourse);
+router.post('/composer/client/courseAction*', hlcClient.courseAction);

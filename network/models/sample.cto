@@ -73,27 +73,6 @@ asset Course identified by courseCode {
     --> Student student
     --> Registrar registrar
 }
-  transaction RequestTuition {
-    --> Course course
-    --> Student student
-    --> Registrar registrar
-    --> Cashier cashier
-}
-  transaction PayTuition {
-    o Double amountPaid
-    --> Course course
-    --> Student student
-    --> Registrar registrar
-    --> Cashier cashier
-}
-  transaction RefundTuition {
-     o Double amountRefunded
-     o String reason
-    --> Course course
-    --> Student student
-    --> Registrar registrar
-    --> Cashier cashier
-}
   transaction AcceptRegistrationStatus {
     o String registrationStatus
     --> Course course
@@ -123,3 +102,25 @@ asset Course identified by courseCode {
     --> Registrar registrar
     --> Cashier cashier
   }
+
+    transaction RequestTuition {
+    --> Course course
+    --> Student student
+    --> Registrar registrar
+    --> Cashier cashier
+}
+  transaction PayTuition {
+    o Double amountPaid
+    --> Course course
+    --> Student student
+    --> Registrar registrar
+    --> Cashier cashier
+}
+  transaction RefundTuition {
+     o Double amountRefunded
+     o String reason
+    --> Course course
+    --> Student student
+    --> Registrar registrar
+    --> Cashier cashier
+}

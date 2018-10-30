@@ -1,13 +1,13 @@
+
 /**
- * Access control rules for mynetwork
- */
-rule Default {
-    description: "Allow all participants access to all resources"
-    participant: "ANY"
-    operation: ALL
-    resource: "org.acme.Z2BTestNetwork.*"
-    action: ALLOW
+rule AllAccess {
+  description: "AllAccess - grant everything to everybody"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
 }
+*/
 
 /**
 * Added to support V0.14 breaking changes
@@ -28,6 +28,109 @@ rule NetworkAdminSystem {
     resource: "org.hyperledger.composer.system.**"
     action: ALLOW
 }
+
+/**
+*
+*/
+rule netAccessParticipant {
+  description: "Allow participants access to the network"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: READ, UPDATE
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
 /**
 * end of V0.14 additions
 */
+
+/**
+*
+**/
+rule StudentACL {
+    description: "Allow student full access to course"
+    participant(m): "org.acme.Z2BTestNetwork.Student"
+    operation: READ, CREATE, UPDATE, DELETE
+    resource(v): "org.acme.Z2BTestNetwork.**"
+    condition: (v.student.studentID == m.getIdentifier())
+    action: ALLOW
+}
+
+rule netAccessStudent{
+  description: "Allow students access to the network"
+  participant: "org.acme.Z2BTestNetwork.Student"
+  operation: READ, CREATE, UPDATE, DELETE
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
+/**
+*
+**/
+rule RegistrarACL {
+    description: "Allow registrar full access to order where they are listed as registrar"
+    participant(m): "org.acme.Z2BTestNetwork.Registrar"
+    operation: READ, UPDATE
+    resource(v): "org.acme.Z2BTestNetwork.Course"
+    condition: (v.registrar.registrarID == m.getIdentifier())
+    action: ALLOW
+}
+
+rule RegistrarAcceptStatus {
+    description: "Enable a Registrar to accept reigstration status for a registered course"
+    participant(m): "org.acme.Z2BTestNetwork.Registrar"
+    operation: READ, CREATE, UPDATE
+    resource(v): "org.acme.Z2BTestNetwork.**"
+    transaction(tx): "org.acme.Z2BTestNetwork.AcceptRegistrationStatus"
+    condition: (v.registrar.registrarID == m.getIdentifier())
+    action: ALLOW
+}
+
+rule RegistrarDenyStatus {
+    description: "Enable a Registrar to deny reigstration status for a registered course"
+    participant(m): "org.acme.Z2BTestNetwork.Registrar"
+    operation: READ, CREATE, UPDATE
+    resource(v): "org.acme.Z2BTestNetwork.**"
+    transaction(tx): "org.acme.Z2BTestNetwork.DenyRegistrationStatus"
+    condition: (v.registrar.registrarID == m.getIdentifier())
+    action: ALLOW
+}
+
+rule RegistrarForwardStatus {
+    description: "Enable a Registrar to forward reigstration status for a registered course"
+    participant(m): "org.acme.Z2BTestNetwork.Registrar"
+    operation: READ, CREATE, UPDATE
+    resource(v): "org.acme.Z2BTestNetwork.**"
+    transaction(tx): "org.acme.Z2BTestNetwork.ForwardRegistrationStatus"
+    condition: (v.registrar.registrarID == m.getIdentifier())
+    action: ALLOW
+}
+
+rule RegistrarCancelCourse {
+    description: "Enable a Registrar to cancel course"
+    participant(m): "org.acme.Z2BTestNetwork.Registrar"
+    operation: READ, CREATE, UPDATE
+    resource(v): "org.acme.Z2BTestNetwork.**"
+    transaction(tx): "org.acme.Z2BTestNetwork.CancelCourse"
+    condition: (v.registrar.registrarID == m.getIdentifier())
+    action: ALLOW
+}
+
+rule netAccessRegistrar {
+  description: "Allow Registrars access to the network"
+  participant: "org.acme.Z2BTestNetwork.Registrar"
+  operation: READ, CREATE, UPDATE, DELETE
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+/**
+*
+**/
+rule CashierACL {
+    description: "Allow cashier full access to order where they are listed as cashier"
+    participant(m): "org.acme.Z2BTestNetwork.Cashier"
+    operation: READ, UPDATE
+    resource(v): "org.acme.Z2BTestNetwork.Course"
+    condition: (v.cashier.cashierID == m.getIdentifier())
+    action: ALLOW
+}
+

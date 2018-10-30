@@ -53,7 +53,7 @@ app.use(cookieParser(sessionSecret));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.set('appName', 'registration-station');
-process.title = 'RegistrationStation';
+process.title = 'Registration Station';
 app.set('port', appEnv.port);
 
 app.set('views', path.join(__dirname + '/HTML'));

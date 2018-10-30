@@ -44,37 +44,34 @@ let  Z2Blockchain  = {
 /**
  * create an empty order. This is used by any server side routine that needs to create an new
  * empty order.
- * @param {createOrderTemplate} _inbound - Order created with factory.newResource(NS, 'Order',.orderNumber)
- * @returns {Order} - updated order item with all required fields except for relationships (buyer, seller)
+ * @param {createCourseTemplate} _inbound - Course created with factory.newResource(NS, 'Course',.courseCode)
+ * @returns {Course} - updated order item with all required fields except for relationships (student, registrar, cashier)
  * @utility
  */
-    createOrderTemplate: function (_inbound)
-    {
-        _inbound.orderNumber = '';
-        _inbound.amount = 0;
-        _inbound.items = [];
-        _inbound.status = JSON.stringify(this.orderStatus.Created);
-        _inbound.created = new Date().toISOString();
-        _inbound.cancelled = '';
-        _inbound.ordered = '';
-        _inbound.bought = '';
-        _inbound.dateBackordered = '';
-        _inbound.requestShipment = '';
-        _inbound.delivered = '';
-        _inbound.delivering = '';
-        _inbound.disputeOpened = '';
-        _inbound.disputeResolved = '';
-        _inbound.orderRefunded = '';
-        _inbound.paymentRequested = '';
-        _inbound.paid = '';
-        _inbound.approved = '';
-        _inbound.dispute = '';
-        _inbound.resolve = '';
-        _inbound.backorder = '';
-        _inbound.refund = '';
-        _inbound.provider = '';
-        _inbound.shipper = '';
-        _inbound.financeCo = '';
+    createCourseTemplate (_inbound)
+{
+        _inbound.courseCode = '';
+        _inbound.courseTitle = '';
+        _inbound.schedule = '';
+        _inbound.creditHours = 0;
+        _inbound.amountPaid = 0;
+        _inbound.amountDue = 0;
+        _inbound.amountRefunded = 0;
+        _inbound.status = '';
+        _inbound.cancelReason = '';
+        _inbound.registrationStatus = '';
+        _inbound.refundReason = '';
+        _inbound.registrationRejectionReason = '';
+        _inbound.created = '';
+        _inbound.registered = '';
+        _inbound.dropped = '';
+        _inbound.tuitionRequested = '';
+        _inbound.tuitionPaid = '';
+        _inbound.refunded = '';
+        _inbound.registrationStatusAccepted = '';
+        _inbound.registrationStatusDenied = '';
+        _inbound.registrationStatusForwarded = '';
+        _inbound.courseCancelled = '';
         return(_inbound);
     },
 /**
@@ -142,23 +139,23 @@ let  Z2Blockchain  = {
 /**
  * add an order to a registry. This adds an Asset and does not execute a transaction
  * @param {order_object} _con - websocket
- * @param {assetRegistry} _order - order_object to process
+ * @param {assetRegistry} _course - order_object to process
  * @param {networkTransaction} _registry - registry into which asset (order) should be placed
  * @param {networkTransaction} _createNew - transaction to be processed after order successfully added
  * @param {businessNetworkConnection} _bnc - business network connection to use
  * @returns {promise} promise
  */
-addOrder: function (_con, _order, _registry, _createNew, _bnc)
+addCourse: function (_con, _course, _registry, _createNew, _bnc)
 {
-    let method = 'addOrder';
-    return _registry.add(_order)
+    let method = 'addCourse';
+    return _registry.add(_course)
     .then(() => {
-        this.loadTransaction(_con, _createNew, _order.orderNumber, _bnc);
+        this.loadTransaction(_con, _createNew, _course.courseCode, _bnc);
     })
     .catch((error) => {
         if (error.message.search('MVCC_READ_CONFLICT') !== -1)
-        {console.log(_order.orderNumber+' addOrder retrying assetRegistry.add for: '+_order.orderNumber);
-            this.addOrder(_con, _order, _registry, _createNew, _bnc);
+        {console.log(_course.courseCode+' addCourse retrying assetRegistry.add for: '+_course.courseCode);
+            this.addCourse(_con, _course, _registry, _createNew, _bnc);
         }
         else {console.log(method+' error with assetRegistry.add', error);}
     });
@@ -167,7 +164,7 @@ addOrder: function (_con, _order, _registry, _createNew, _bnc)
 /**
  * repeats the bind identity request
  * @param {WebSocket} _con - order_object to process
- * @param {String} _id - registry into which asset (order) should be placed
+ * @param {String} _id - registry into which asset (course) should be placed
  * @param {String} _cert - transaction to be processed after order successfully added
  * @param {BusinessNetworkConnection} _bnc - business network connection to use
  * @returns {promise} promise
@@ -213,7 +210,7 @@ saveItemTable: function (_table)
     console.log('_table: ', _table);
     let options = { flag : 'w' };
     let newFile = path.join(path.dirname(require.main.filename),'startup','itemList.txt');
-    let _mem = '{"items": [';
+    let _mem = '{"classes": [';
     for (let each in _table)
         {(function(_idx, _arr){if(_idx>0){_mem += ', ';} _mem += JSON.stringify(_arr[_idx]);})(each, _table);}
     _mem += ']}';
@@ -222,9 +219,9 @@ saveItemTable: function (_table)
 },
 /**
  * update an empty order with 4 items. update the amount field based on the sum of the line items
- * @param {addItems} _inbound - Order created with factory.newResource(NS, 'Order',.orderNumber)
- * @param {itemTable} _itemTable - arry of existing items
- * @returns {Order} - updated order item with all required fields except for relationships (buyer, seller)
+ * @param {addItems} _inbound - Course created with factory.newResource(NS, 'Course',.courseCode)
+ * @param {itemTable} _itemTable - array of existing items
+ * @returns {Course} - updated course item with all required fields except for relationships (student, registrar, cashier)
  * @utility
  */
     addItems: function (_inbound, _itemTable)
@@ -248,46 +245,39 @@ saveItemTable: function (_table)
 /**
  * formats an Order into a reusable json object. work-around because serializer 
  * was not initially working. This function is no longer in use.
- * @param {Order} _order - the inbound Order item retrieved from a registry
+ * @param {Course} _course - the inbound Course item retrieved from a registry
  * @return JSON object order elements
- * @return {Order} JSON object order elements
+ * @return {Course} JSON object course elements
  * @function
  */
-getOrderData: function (_order)
-{
-    let orderElements = ['items', 'status', 'amount', 'created', 'cancelled', 'bought', 'ordered', 'dateBackordered', 'requestShipment', 'delivered', 'delivering', 'approved',
-    'disputeOpened', 'disputeResolved', 'paymentRequested', 'orderRefunded', 'paid', 'dispute', 'resolve', 'backorder', 'refund'];
-    let _obj = {};
-    for (let each in orderElements){(function(_idx, _arr)
-    { _obj[_arr[_idx]] = _order[_arr[_idx]]; })(each, orderElements);}
-    _obj.buyer = _order.buyer.$identifier;
-    _obj.seller = _order.seller.$identifier;
-    _obj.provider = _order.seller.$provider;
-    _obj.shipper = _order.seller.$shipper;
-    _obj.financeCo = _order.seller.$financeCo;
-    return (_obj);
-},
+    getCourseData: function (_course)
+    {
+        let courseElements = ['items', 'status', 'amount', 'created', 'cancelled', 'bought', 'ordered', 'dateBackordered', 'requestShipment', 'delivered', 'delivering', 'approved',
+            'disputeOpened', 'disputeResolved', 'paymentRequested', 'orderRefunded', 'paid', 'dispute', 'resolve', 'backorder', 'refund'];
+        let _obj = {};
+        for (let each in courseElements){(function(_idx, _arr)
+        { _obj[_arr[_idx]] = _course[_arr[_idx]]; })(each, courseElements);}
+        _obj.student = _course.buyer.$identifier;
+        _obj.registrar = _course.registrar.$identifier;
+        _obj.cashier = _course.cashier.$provider;
+        return (_obj);
+    },
 
 /**
- * JSON object of available order status types and codes. This is used by nodejs 
+ * JSON object of available order status types and codes. This is used by nodejs
  * server side code to correctly update order status with identical codes and text.
  */
-    orderStatus: {
-        Created: {code: 1, text: 'Order Created'},
-        Bought: {code: 2, text: 'Order Purchased'},
-        Cancelled: {code: 3, text: 'Order Cancelled'},
-        Ordered: {code: 4, text: 'Order Submitted to Provider'},
-        ShipRequest: {code: 5, text: 'Shipping Requested'},
-        Delivered: {code: 6, text: 'Order Delivered'},
-        Delivering: {code: 15, text: 'Order being Delivered'},
-        Backordered: {code: 7, text: 'Order Backordered'},
-        Dispute: {code: 8, text: 'Order Disputed'},
-        Resolve: {code: 9, text: 'Order Dispute Resolved'},
-        PayRequest: {code: 10, text: 'Payment Requested'},
-        Authorize: {code: 11, text: 'Payment Approved'},
-        Paid: {code: 14, text: 'Payment Processed'},
-        Refund: {code: 12, text: 'Order Refund Requested'},
-        Refunded: {code: 13, text: 'Order Refunded'}
+    courseStatus: {
+        Created: {code: 1, text: 'Course Created'},
+        Registered: {code: 2, text: 'Course Registered'},
+        Dropped: {code: 3, text: 'Course Dropped'},
+        TuitionRequested: {code: 4, text: 'Tuition Requested'},
+        TuitionPaid: {code: 5, text: 'Tuition Paid'},
+        Refunded: {code: 6, text: 'Tuition Refunded'},
+        RegistrationStatusAccepted: {code: 7, text: 'Registration Status Accepted'},
+        RegistrationStatusDenied: {code: 8, text: 'Registration Status Denied'},
+        RegistrationStatusForwarded: {code: 9, text: 'Registration Status Forwarded'},
+        Cancelled: {code: 10, text: 'Course Cancelled'}
     },
 /**
  * New code to support sending messages to socket clients
@@ -295,10 +285,10 @@ getOrderData: function (_order)
  * @param {String} type - type of event message to put on channel
  * @param {Event} event - event message
  */
-send: function (_locals, type, event)
-{
-    _locals.processMessages({'type': type, 'data': event} );
-}
+    send: function (_locals, type, event)
+    {
+        _locals.processMessages({'type': type, 'data': event} );
+    }
 };
 
 module.exports = Z2Blockchain;

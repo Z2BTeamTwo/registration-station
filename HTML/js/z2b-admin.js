@@ -391,7 +391,7 @@ function listRegistry()
         _str += '<table width="100%"><tr><th>Type</th><th>Company</th><th>email</th></tr>';
         for (let each in _results.members)
         {(function(_idx, _arr){
-            _str += '<tr><td>'+_arr[_idx].type+'</td><td>'+_arr[_idx].companyName+'</td><td>'+_arr[_idx].id+'</td></tr>';
+            _str += '<tr><td>'+_arr[_idx].type+'</td><td>'+_arr[_idx].participantName+'</td><td>'+_arr[_idx].id+'</td></tr>';
         })(each, _results.members);}
         _str += '</ul>';
         $('#admin-forms').empty();
@@ -528,7 +528,7 @@ function createCard()
 function listAssets()
 {
     let options = {};
-    options.registry = 'Order';
+    options.registry = 'Course';
     options.type='admin';
     $.when($.post('/composer/admin/getAssets', options)).done(function (_results)
     {
@@ -537,10 +537,10 @@ function listAssets()
         _str += '<h4>Network update results: '+_results.result+'</h4>';
         if (_results.result === 'success')
         {
-            _str += '<table width="100%"><tr><th>Order Number</th><th>Created</th><th>Status</th><th>Buyer/Seller</th><th>Amount</th></tr>';
+            _str += '<table width="100%"><tr><th>Course Code</th><th>Created</th><th>Status</th><th>Student/Registrar</th><th>Amount</th></tr>';
             for (let each in _results.orders)
             {(function(_idx, _arr){
-                _str += '<tr><td align="center">'+_arr[_idx].id+'</td><td>'+_arr[_idx].created+'</td><td>'+JSON.parse(_arr[_idx].status).text+'</td><td>'+_arr[_idx].buyer+'<br/>'+_arr[_idx].seller+'</td><td align="right">$'+_arr[_idx].amount+'.00</td></tr>';
+                _str += '<tr><td align="center">'+_arr[_idx].id+'</td><td>'+_arr[_idx].created+'</td><td>'+JSON.parse(_arr[_idx].status).text+'</td><td>'+_arr[_idx].student+'<br/>'+_arr[_idx].registrar+'</td><td align="right">$'+_arr[_idx].amount+'.00</td></tr>';
             })(each, _results.orders);}
             _str += '</ul>';
         } else {_str += '<br/>'+_results.error;}
@@ -566,7 +566,7 @@ function addMember()
         _submit.on('click', function(){
             $('#messages').append('<br/>starting add member request.');
             let options = {};
-            options.companyName = $('#companyName').val();
+            options.participantName = $('#participantName').val();
             options.id = $('#participant_id').val();
             options.type = $('#member_type').find(':selected').text();
             $.when($.post('/composer/admin/addMember', options)).done(function(_res)
@@ -669,8 +669,8 @@ function getSecret()
 function displayMember(id, _list)
 {
     let member = findMember(id, _list);
-    $('#companyName').empty();
-    $('#companyName').append(member.companyName);
+    $('#participantName').empty();
+    $('#participantName').append(member.participantName);
     $('#participant_id').empty();
     $('#participant_id').append(member.id);
 }
@@ -679,11 +679,11 @@ function displayMember(id, _list)
  * find the member identified by _id in the array of JSON objects identified by _list
  * @param {String} _id - string with member id
  * @param {JSON} _list - array of JSON member objects
- * @returns {JSON} - {'id': Member ID, 'companyName': 'not found ... or company name if found'}
+ * @returns {JSON} - {'id': Member ID, 'participantName': 'not found ... or company name if found'}
  */
 function findMember(_id, _list)
 {
-    let _mem = {'id': _id, 'companyName': 'not found'};
+    let _mem = {'id': _id, 'participantName': 'not found'};
     for (let each in _list){(function(_idx, _arr)
     {
         if (_arr[_idx].id === _id)

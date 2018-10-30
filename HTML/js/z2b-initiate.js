@@ -22,29 +22,23 @@ let businessNetwork = 'zerotoblockchain-network';
 
 let host_address = window.location.host;
 
-let buyers = new Array();
-let sellers= new Array();
-let providers= new Array();
-let shippers= new Array();
+let students = new Array();
+let registrars= new Array();
+let cashiers= new Array();
 
-let s_string, p_string, sh_string;
+let students_string, registrars_string, cashiers_string;
 
-let orderStatus = {
-    Created: {code: 1, text: 'Order Created'},
-    Bought: {code: 2, text: 'Order Purchased'},
-    Cancelled: {code: 3, text: 'Order Cancelled'},
-    Ordered: {code: 4, text: 'Order Submitted to Provider'},
-    ShipRequest: {code: 5, text: 'Shipping Requested'},
-    Delivered: {code: 6, text: 'Order Delivered'},
-    Delivering: {code: 15, text: 'Order being Delivered'},
-    Backordered: {code: 7, text: 'Order Backordered'},
-    Dispute: {code: 8, text: 'Order Disputed'},
-    Resolve: {code: 9, text: 'Order Dispute Resolved'},
-    PayRequest: {code: 10, text: 'Payment Requested'},
-    Authorize: {code: 11, text: 'Payment Approved'},
-    Paid: {code: 14, text: 'Payment Processed'},
-    Refund: {code: 12, text: 'Order Refund Requested'},
-    Refunded: {code: 13, text: 'Order Refunded'}
+let courseStatus = {
+    Created: {code: 1, text: 'Course Created'},
+    Registered: {code: 2, text: 'Course Registered'},
+    Dropped: {code: 3, text: 'Course Dropped'},
+    TuitionRequested: {code: 4, text: 'Tuition Requested'},
+    TuitionPaid: {code: 5, text: 'Tuition Paid'},
+    Refunded: {code: 6, text: 'Tuition Refunded'},
+    RegistrationStatusAccepted: {code: 7, text: 'Registration Status Accepted'},
+    RegistrationStatusDenied: {code: 8, text: 'Registration Status Denied'},
+    RegistrationStatusForwarded: {code: 9, text: 'Registration Status Forwarded'},
+    Cancelled: {code: 10, text: 'Course Cancelled'}
 };
 
 /**
