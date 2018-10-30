@@ -268,16 +268,25 @@ function formatCourses(_target, _courses)
         case courseStatus.Refunded.code:
             _date = _arr[_idx].refunded + '<br/>'+_arr[_idx].backorder;
             if(_arr[_idx].registrationStatus != 'Cancelled'){
-                _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.orderProcess.Register.message+'</option>'
+                _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.orderProcess.Register.message+'</option>';
             }
             break;
         case courseStatus.RegistrationStatusAccepted.code:
             _date = _arr[_idx].registrationStatusAccepted;
-            _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
+            if (_arr[_idx].registrationStatus == 'Registered'){
+                _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
+            } else {
+                _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.courseProcess.Register.message+'</option>';
+            }
+            
             break;
         case courseStatus.RegistrationStatusDenied.code:
             _date = _arr[_idx].registrationStatusDenied;
-            _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
+            if (_arr[_idx].registrationStatus == 'Registered'){
+                _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
+            } else if (_arr[_idx].registrationStatus == 'Dropped') {
+                _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.courseProcess.Register.message+'</option>';
+            }
             break;
         case courseStatus.RegistrationStatusForwarded.code:
             _date = _arr[_idx].registrationStatusForwarded;

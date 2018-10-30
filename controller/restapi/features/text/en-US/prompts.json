@@ -1,12 +1,12 @@
 {
     "index": {"language": "US English",
       "title": "Registration Station",
-      "header": "Student",
+      "header": "Registration Station",
       "titleBar": "Registration Station",
       "idx_unified": "load Unified User Experience",
       "idx_student": "load Student User Experience",
       "idx_registrar": "load Registrar User Experience",
-      "idx_provider": "load Provider User Experience",
+      "idx_cashier": "load Cashier User Experience",
       "idx_shipper": "load Shipper User Experience",
       "idx_financeco": "load Finance Company User Experience",
       "idx_roles": "Roles",
@@ -176,7 +176,10 @@
       "student_no_course_msg": "No courses for this student: ",
       "registrar_cashier_no_course_msg": "No courses have been submitted for your review.",
       "create_msg": "Processing Create Course request",
-      "student": "Student: "
+      "student": "Student: ",
+      "student_no_courses_msg": "No courses for student: ",
+      "registrar_no_courses_msg": "No courses for registrar.",
+      "cashier_no_courses_msg": "No courses for cashier."
     }
   }
   

@@ -75,7 +75,7 @@ function listRegistrarCourses()
     options.userID = options.id;
     $.when($.post('/composer/client/getMyCourses', options)).done(function(_results)
     {
-        if (_results.courses.length < 1) {$('#registrarCourseDiv').empty(); $('#registrarCourseDiv').append(formatMessage(textPrompts.courseProcess.registrar_no_order_msg+options.id));}
+        if (_results.courses.length < 1) {$('#registrarCourseDiv').empty(); $('#registrarCourseDiv').append(formatMessage(textPrompts.courseProcess.registrar_no_courses_msg));}
         else{formatRegistrarCourses($('#registrarCourseDiv'), _results.courses);}
     });
 }
@@ -151,6 +151,7 @@ function formatRegistrarCourses(_target, _courses)
         case courseStatus.RegistrationStatusForwarded.code:
             _date = _arr[_idx].registrationStatusForwarded;
             _action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
+            r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
             break;
         case courseStatus.Cancelled.code:
             _date = _arr[_idx].courseCancelled;
@@ -181,6 +182,7 @@ function formatRegistrarCourses(_target, _courses)
           if ((options.action === 'DenyRegistrationStatus') || (options.action === 'CancelCourse')) {options.reason = $('#reason'+_idx).val();}
           if (options.action === 'AcceptRegistrationStatus')
           {
+              console.log('we are accepting registration status and the status code is', _registrationStatus[_idx]);
               options.registrationStatus = _registrationStatus[_idx];
           }
           $('#registrar_messages').prepend(formatMessage(options.action+textPrompts.courseProcess.processing_msg.format(options.action, options.courseCode)));

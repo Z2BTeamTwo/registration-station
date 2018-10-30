@@ -144,16 +144,17 @@ exports.courseAction = function (req, res, next) {
                     updateCourse = factory.newTransaction(NS, 'RegisterCourse');
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', 'registrar@waketech.edu');
                     updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
-                    console.log('Register update course', updateCourse);
+                    console.log('\n\n\n\n\n\n\nREGISTER COURSE PAY ATTENTION\n\n\n');
+                    console.log('course', course);
+                    // console.log('Register update course', updateCourse);
                     break;
                 case 'DropCourse':
                     console.log('Course drop entered');
                     updateCourse = factory.newTransaction(NS, 'DropCourse');
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
-                    console.log('req.body', req.body);
+                    console.log('\n\n\n\n\n\n\nDROP COURSE PAY ATTENTION\n\n\n');
                     console.log('course', course);
-                    console.log('updateCourse', updateCourse);
                     break;
                 case 'AcceptRegistrationStatus':
                     console.log('Accept Registration Status entered');
@@ -162,14 +163,18 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
                     updateCourse.registrationStatus = req.body.registrationStatus;
+                    console.log('\n\n\n\n\n\n\nACCEPT REG STATUS PAY ATTENTION\n\n\n');
+                    console.log('course', course);
                     break;
                 case 'DenyRegistrationStatus':
                     console.log('Deny Registration Status entered');
                     updateCourse = factory.newTransaction(NS, 'DenyRegistrationStatus');
                     updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
-                    console.log('reason', req.body.reason);
+                    // console.log('reason', req.body.reason);
                     updateCourse.reasonForRejection = req.body.reason;
+                    console.log('\n\n\n\n\n\n\nDENY REG STATUS PAY ATTENTION\n\n\n');
+                    console.log('course', course);
                     break;
                 case 'ForwardRegistrationStatus':
                     console.log('Forward Registration Status entered');
@@ -177,6 +182,8 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', req.body.cashier);
+                    console.log('\n\n\n\n\n\n\nFORWARD REG STATUS PAY ATTENTION\n\n\n');
+                    console.log('course', course);
                     break;
                 case 'CancelCourse':
                     console.log('Cancel course entered');
@@ -185,6 +192,8 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
                     updateCourse.reasonForCancellation = req.body.reason;
+                    console.log('\n\n\n\n\n\n\nCOURSE CANCELLATION PAY ATTENTION\n\n\n');
+                    console.log('course', course);
                     break;
                 case 'RequestTuition':
                     // to be completed for cashier
@@ -196,6 +205,8 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifer);
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifer);
                     updateCourse.amountPaid = parseFloat(req.body.amount);
+                    console.log('\n\n\n\n\n\n\nTUITION PAYMENT PAY ATTENTION\n\n\n');
+                    console.log('course', course);
                     break;
                 case 'RefundTuition':
                     // console.log('Update Delivery Status');

@@ -48,7 +48,7 @@ function CreateCourse(register) {
  * @transaction
  */
 function RegisterCourse(register) {
-    if (register.course.status == JSON.stringify(courseStatus.Created))
+    if (register.course.status == JSON.stringify(courseStatus.Created) || JSON.parse(register.course.status).code == courseStatus.Dropped.code || (register.course.status == JSON.stringify(courseStatus.RegistrationStatusAccepted) & register.course.registrationStatus == 'Dropped'))
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
@@ -66,7 +66,7 @@ function RegisterCourse(register) {
  * @transaction
  */
 function DropCourse(register) {
-    if (register.course.status == JSON.stringify(courseStatus.Created) || register.course.status == JSON.stringify(courseStatus.Registered))
+    if (register.course.status == JSON.stringify(courseStatus.Created) || register.course.status == JSON.stringify(courseStatus.Registered) || (register.course.status != JSON.stringify(courseStatus.Registered) & register.course.registrationStatus == 'Registered'))
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
@@ -159,6 +159,7 @@ function AcceptRegistrationStatus(register) {
         var _status = courseStatus.RegistrationStatusAccepted;
         _status.text += " " + register.registrationStatus;
         register.course.status = JSON.stringify(_status);
+        register.course.amountDue = register.course.creditHours * 100;
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
                 return assetRegistry.update(register.course);
@@ -169,6 +170,7 @@ function AcceptRegistrationStatus(register) {
         register.course.cashier = register.cashier;
         register.course.registrationStatusAccepted = new Date().toISOString();
         register.course.registrationStatus = register.registrationStatus;
+        register.course.amountDue = 0;
         var _status = courseStatus.RegistrationStatusAccepted;
         _status.text += " " + register.registrationStatus;
         register.course.status = JSON.stringify(_status);
