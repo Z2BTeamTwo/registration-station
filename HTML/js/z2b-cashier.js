@@ -23,7 +23,7 @@ let registrar_count = '#cashier_count';
 /**
  * load the administration Cashier Experience
  */
-function loadRegistrarUX ()
+function loadCashierUX ()
 {
     console.log(cashiers);
     let toLoad = 'cashier.html';
