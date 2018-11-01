@@ -20,5 +20,18 @@ query selectOrdersByRegistrar {
       SELECT org.acme.Z2BTestNetwork.Course
           WHERE (registrar.registrarID == _$id)
 }
+query selectOrdersByCashier {
+  description: "Select all courses for the cashier"
+  statement:
+      SELECT org.acme.Z2BTestNetwork.Course
+          WHERE (cashier.cashierID == _$id)
+}
+
+query selectOrdersByAdvisor {
+  description: "Select all courses for the advisor"
+  statement:
+      SELECT org.acme.Z2BTestNetwork.Course
+          WHERE (advisor.advisorID == _$id)
+}
 
 
