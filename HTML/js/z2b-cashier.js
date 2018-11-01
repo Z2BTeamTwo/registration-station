@@ -125,36 +125,46 @@ function formatCashierCourses(_target, _courses)
             */
         case courseStatus.TuitionRequested.code:
             _date = _arr[_idx].tuitionRequested;
-            _action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
-            r_string = '<br/>'+textPrompts.courseProcess.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
+            //_action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
+            //r_string = '<br/>'+textPrompts.courseProcess.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
             break;
         case courseStatus.TuitionPaid.code:
             _date = _arr[_idx].tuitionPaid;
-            _action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
-            r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
+            //_action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
+            //r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
             break;
         case courseStatus.Refunded.code:
             _date = _arr[_idx].refunded;
             break;
         case courseStatus.RegistrationStatusAccepted.code:
             _date = _arr[_idx].registrationStatusAccepted;
-            _action += '<option value="'+textPrompts.courseProcess.ForwardRegistrationStatus.select+'">'+textPrompts.courseProcess.ForwardRegistrationStatus.message+'</option>';
-            _action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
-            r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
+            //_action += '<option value="'+textPrompts.courseProcess.ForwardRegistrationStatus.select+'">'+textPrompts.courseProcess.ForwardRegistrationStatus.message+'</option>';
+            //_action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
+            //r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
             break;
         case courseStatus.RegistrationStatusDenied.code:
             _date = _arr[_idx].registrationStatusDenied;
-            _action += '<option value="'+textPrompts.courseProcess.ForwardRegistrationStatus.select+'">'+textPrompts.courseProcess.ForwardRegistrationStatus.message+'</option>';
-            _action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
-            r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
+            //_action += '<option value="'+textPrompts.courseProcess.ForwardRegistrationStatus.select+'">'+textPrompts.courseProcess.ForwardRegistrationStatus.message+'</option>';
+            //_action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
+            //r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
             break;
         case courseStatus.RegistrationStatusForwarded.code:
             _date = _arr[_idx].registrationStatusForwarded;
+            if(_arr[_idx].registrationStatus=='Dropped'||'Cancelled'){
+            _action += '<option value="'+textPrompts.courseProcess.RefundTuition.select+'">'+textPrompts.courseProcess.RefundTuition.message+'</option>';//added action to perform refund of tuition
+            r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input><br/>'+textPrompts.courseProcess.refundAmount.prompt+'<input id="amount'+_idx+'type="text"></input></th>';
+            }
+            else if(_arr[_idx].registrationStatus=='Registered'){
+                _action += '<option value="'+textPrompts.courseProcess.RequestTuition.select+'">'+textPrompts.courseProcess.RequestTuition.message+'</option>';
+            }
             _action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
             r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input><br/>'+textPrompts.courseProcess.refundAmount.prompt+'<input id="amount'+_idx+'type="text"></input></th>';
             break;
         case courseStatus.Cancelled.code:
             _date = _arr[_idx].courseCancelled;
+            _action += '<option value="'+textPrompts.courseProcess.RefundTuition.select+'">'+textPrompts.courseProcess.RefundTuition.message+'</option>';//added action to perform refund of tuition
+            r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input><br/>'+textPrompts.courseProcess.refundAmount.prompt+'<input id="amount'+_idx+'type="text"></input></th>';
+
             break;
         default:
             break;
@@ -176,9 +186,15 @@ function formatCashierCourses(_target, _courses)
           let options = {};
           options.action = $('#cashier_action'+_idx).find(':selected').val();
           options.courseCode = $('#cashier_course'+_idx).text();
-          options.participant = registrar_id;
-          options.cashier = cashier_id;
-          //if((options.action==='options.amountRefunded = $('#amount'+_idx).val();
+          options.participant = cashier_id;
+          //options.cashier = cashier_id;
+          if(options.action=== 'RefundTuition'&& _arr[_idx].registrationStatus=== 'Dropped'||'Cancelled'){
+            options.reason= $('#reason'+_idx).val();//retrieving and assigning reason to reason variable option
+            options.amount = $('#amount'+_idx).val();//retrieving and assigning amount to amount variable option
+        }
+          
+
+          
           console.log('presending options', options.action, $('#reason'+_idx).val());
           if ((options.action === 'DenyRegistrationStatus') || (options.action === 'CancelCourse')) {options.reason = $('#reason'+_idx).val();}
           if (options.action === 'AcceptRegistrationStatus')

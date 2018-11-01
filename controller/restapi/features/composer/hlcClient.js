@@ -196,7 +196,12 @@ exports.courseAction = function (req, res, next) {
                     console.log('course', course);
                     break;
                 case 'RequestTuition':
-                    // to be completed for cashier
+                    console.log('Please Pay Shown Amount');
+                    updateCourse = factory.newTransaction(NS, 'RequestTuition');
+                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
+                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
+                    updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
+
                     break;
                 case 'PayTuition':
                     console.log('Pay Tuition entered');
@@ -209,10 +214,17 @@ exports.courseAction = function (req, res, next) {
                     console.log('course', course);
                     break;
                 case 'RefundTuition':
-                    // console.log('Update Delivery Status');
-                    // updateOrder = factory.newTransaction(NS, 'Delivering');
-                    // updateOrder.shipper = factory.newRelationship(NS, 'Shipper', req.body.participant);
-                    // updateOrder.deliveryStatus = req.body.delivery;
+                console.log('We are Giving You Your Money Back');
+                updateCourse = factory.newTransaction(NS, 'RefundTuition');
+                updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
+                updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
+                updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
+                updateCourse.amountRefunded = parseFLoat(req.body.amount);
+                updateCourse.reason = req.body.reason;
+                console.log('\n\n\n\n\n\n\n\nCOURSE REFUND PAY ATTENTION\n\n\n');
+                console.log('course', course);
+
+
                     break;
                 default :
                     console.log('default entered for action: '+req.body.action);
