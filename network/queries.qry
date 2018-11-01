@@ -27,11 +27,12 @@ query selectOrdersByCashier {
           WHERE (cashier.cashierID == _$id)
 }
 
+/**
 query selectOrdersByAdvisor {
   description: "Select all courses for the advisor"
   statement:
       SELECT org.acme.Z2BTestNetwork.Course
           WHERE (advisor.advisorID == _$id)
 }
-
+*/
 
