@@ -134,3 +134,29 @@ rule CashierACL {
     action: ALLOW
 }
 
+rule CashierRequestTuition {
+    description: "Enable a Cashier to request tuition for a registered course"
+    participant(m): "org.acme.Z2BTestNetwork.Cashier"
+    operation: READ, CREATE, UPDATE
+    resource(v): "org.acme.Z2BTestNetwork.**"
+    transaction(tx): "org.acme.Z2BTestNetwork.RequestTuition"
+    condition: (v.cashier.cashierID == m.getIdentifier())
+    action: ALLOW
+}
+rule CashierRefundTuition {
+    description: "Enable a Cashier to refund tuition for a registered course"
+    participant(m): "org.acme.Z2BTestNetwork.Cashier"
+    operation: READ, CREATE, UPDATE
+    resource(v): "org.acme.Z2BTestNetwork.**"
+    transaction(tx): "org.acme.Z2BTestNetwork.RefundTuition"
+    condition: (v.cashier.cashierID == m.getIdentifier())
+    action: ALLOW
+}
+rule netAccessCashier {
+  description: "Allow Cashiers access to the network"
+  participant: "org.acme.Z2BTestNetwork.Cashier"
+  operation: READ, CREATE, UPDATE, DELETE
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
