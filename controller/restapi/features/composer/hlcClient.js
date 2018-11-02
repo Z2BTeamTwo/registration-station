@@ -201,30 +201,31 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
-
+                    console.log('\n\n\n\n\n\n\nTUITION PAYMENT PAY ATTENTION\n\n\n');
+                    console.log('course', course);
+                    console.log('transaction', updateCourse);
                     break;
                 case 'PayTuition':
                     console.log('Pay Tuition entered');
                     updateCourse = factory.newTransaction(NS, 'PayTuition');
-                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifer);
-                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifer);
-                    updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifer);
+                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
+                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
+                    updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
                     updateCourse.amountPaid = parseFloat(req.body.amount);
                     console.log('\n\n\n\n\n\n\nTUITION PAYMENT PAY ATTENTION\n\n\n');
                     console.log('course', course);
+                    console.log('transaction', updateCourse);
                     break;
                 case 'RefundTuition':
-                console.log('We are Giving You Your Money Back');
-                updateCourse = factory.newTransaction(NS, 'RefundTuition');
-                updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
-                updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
-                updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
-                updateCourse.amountRefunded = parseFLoat(req.body.amount);
-                updateCourse.reason = req.body.reason;
-                console.log('\n\n\n\n\n\n\n\nCOURSE REFUND PAY ATTENTION\n\n\n');
-                console.log('course', course);
-
-
+                    console.log('We are Giving You Your Money Back');
+                    updateCourse = factory.newTransaction(NS, 'RefundTuition');
+                    updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
+                    updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
+                    updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
+                    updateCourse.amountRefunded = parseFloat(req.body.amount);
+                    updateCourse.reason = req.body.reason;
+                    console.log('\n\n\n\n\n\n\n\nCOURSE REFUND PAY ATTENTION\n\n\n');
+                    console.log('course', course);
                     break;
                 default :
                     console.log('default entered for action: '+req.body.action);

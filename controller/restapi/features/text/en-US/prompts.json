@@ -149,8 +149,8 @@
     },
     "cashier": {
       "title": "Shipper Chapter 5, Select Shipper to see their view: ",
-      "shipper_clear": "Clear Window",
-      "shipperOrderStatus": "Display Order Status    "
+      "cashier_clear": "Clear Window",
+      "cashierCourseStatus": "Display Order Status    "
     },
     "singleUX": {},
     "courseProcess": {
@@ -162,7 +162,7 @@
       "CancelCourse": {"select": "CancelCourse", "message": "Cancel Course", "prompt": "Reason: "},
       "RequestTuition": {"select": "RequestTuition", "message": "Request Tuition"},
       "PayTuition": {"select": "PayTuition", "message": "Pay", "prompt": "Amount to Pay: "},
-      "RefundTuition": {"select": "RefundTuition", "message": "Refund", "prompt": "Amount to Refund:"},
+      "RefundTuition": {"select": "RefundTuition", "message": "Refund", "prompt": "Reason for Refund:"},
       "NoAction": {"select": "NoAction", "message": "Take No Action"},
       "ex_button": "Execute",
       "ca_button": "Cancel",

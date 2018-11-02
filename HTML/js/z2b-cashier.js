@@ -15,10 +15,10 @@
 // z2b-cashier.js
 
 'use strict';
-let registrarCourseDiv = 'cashierCourseDiv';
-let registrar_alerts = [];
-let registrar_notify = '#cashier_notify';
-let registrar_count = '#cashier_count';
+let cashierCourseDiv = 'cashierCourseDiv';
+let cashier_alerts = [];
+let cashier_notify = '#cashier_notify';
+let cashier_count = '#cashier_count';
 
 /**
  * load the administration Cashier Experience
@@ -70,12 +70,12 @@ function listCashierCourses()
     //
     // seller instead of buyer
     //
-    options.id= cashier_id;
+    options.id = cashier_id;
     options.userID = options.id;
     $.when($.post('/composer/client/getMyCourses', options)).done(function(_results)
     {
         if (_results.courses.length < 1) {$('#cashierCourseDiv').empty(); $('#cashierCourseDiv').append(formatMessage(textPrompts.courseProcess.cashier_no_courses_msg));}
-        else{formatRegistrarCourses($('#cashierCourseDiv'), _results.courses);}
+        else{formatCashierCourses($('#cashierCourseDiv'), _results.courses);}
     });
 }
 /**
@@ -150,20 +150,18 @@ function formatCashierCourses(_target, _courses)
             break;
         case courseStatus.RegistrationStatusForwarded.code:
             _date = _arr[_idx].registrationStatusForwarded;
-            if(_arr[_idx].registrationStatus=='Dropped'||'Cancelled'){
+            if(_arr[_idx].registrationStatus == 'Dropped'||_arr[_idx].registrationStatus == 'Cancelled'){
             _action += '<option value="'+textPrompts.courseProcess.RefundTuition.select+'">'+textPrompts.courseProcess.RefundTuition.message+'</option>';//added action to perform refund of tuition
-            r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input><br/>'+textPrompts.courseProcess.refundAmount.prompt+'<input id="amount'+_idx+'type="text"></input></th>';
+            r_string = '<br/>'+textPrompts.courseProcess.RefundTuition.prompt+'<input id="reason'+_idx+'" type="text"></input><br/>'+textPrompts.courseProcess.amountRefunded+'<input id="amount'+_idx+'type="text"></input></th>';
             }
-            else if(_arr[_idx].registrationStatus=='Registered'){
+            else if(_arr[_idx].registrationStatus == 'Registered'){
                 _action += '<option value="'+textPrompts.courseProcess.RequestTuition.select+'">'+textPrompts.courseProcess.RequestTuition.message+'</option>';
             }
-            _action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
-            r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input><br/>'+textPrompts.courseProcess.refundAmount.prompt+'<input id="amount'+_idx+'type="text"></input></th>';
             break;
         case courseStatus.Cancelled.code:
             _date = _arr[_idx].courseCancelled;
             _action += '<option value="'+textPrompts.courseProcess.RefundTuition.select+'">'+textPrompts.courseProcess.RefundTuition.message+'</option>';//added action to perform refund of tuition
-            r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input><br/>'+textPrompts.courseProcess.refundAmount.prompt+'<input id="amount'+_idx+'type="text"></input></th>';
+            r_string = '<br/>'+textPrompts.courseProcess.RefundTuition.prompt+'<input id="reason'+_idx+'" type="text"></input><br/>'+textPrompts.courseProcess.amountRefunded+'<input id="amount'+_idx+'type="text"></input></th>';
 
             break;
         default:
@@ -187,7 +185,6 @@ function formatCashierCourses(_target, _courses)
           options.action = $('#cashier_action'+_idx).find(':selected').val();
           options.courseCode = $('#cashier_course'+_idx).text();
           options.participant = cashier_id;
-          //options.cashier = cashier_id;
           if(options.action=== 'RefundTuition'&& _arr[_idx].registrationStatus=== 'Dropped'||'Cancelled'){
             options.reason= $('#reason'+_idx).val();//retrieving and assigning reason to reason variable option
             options.amount = $('#amount'+_idx).val();//retrieving and assigning amount to amount variable option

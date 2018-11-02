@@ -211,6 +211,7 @@ function ForwardRegistrationStatus(register) {
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
+        register.course.cashier = register.cashier;
         register.course.registrationStatusForwarded = new Date().toISOString();
         var _status = courseStatus.RegistrationStatusForwarded
         _status.text += " " + register.course.registrationStatus;
