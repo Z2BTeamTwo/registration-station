@@ -266,9 +266,9 @@ function formatCourses(_target, _courses)
             }
             break;
         case courseStatus.Refunded.code:
-            _date = _arr[_idx].refunded + '<br/>'+_arr[_idx].backorder;
+            _date = _arr[_idx].refunded + "<br/>" + _arr[_idx].refundReason;
             if(_arr[_idx].registrationStatus != 'Cancelled'){
-                _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.orderProcess.Register.message+'</option>';
+                _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.courseProcess.Register.message+'</option>';
             }
             break;
         case courseStatus.RegistrationStatusAccepted.code:
