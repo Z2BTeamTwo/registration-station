@@ -130,6 +130,10 @@ function formatCashierCourses(_target, _courses)
             break;
         case courseStatus.TuitionPaid.code:
             _date = _arr[_idx].tuitionPaid;
+            if (_arr[_idx].amountDue < 0){
+                _action += '<option value="'+textPrompts.courseProcess.RefundTuition.select+'">'+textPrompts.courseProcess.RefundTuition.message+'</option>';//added action to perform refund of tuition
+                r_string = '<br/>'+textPrompts.courseProcess.RefundTuition.prompt+'<input id="reason'+_idx+'" type="text"></input><br/>'+textPrompts.courseProcess.amountRefunded+'<input id="amount'+_idx+'" type="text"></input></th>';
+            }
             //_action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
             //r_string = '<br/>'+textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
             break;
@@ -185,7 +189,7 @@ function formatCashierCourses(_target, _courses)
           options.action = $('#cashier_action'+_idx).find(':selected').val();
           options.courseCode = $('#cashier_course'+_idx).text();
           options.participant = cashier_id;
-          if(options.action === 'RefundTuition' && (_arr[_idx].registrationStatus == 'Dropped'||_arr[_idx].registrationStatus == 'Cancelled')){
+          if(options.action === 'RefundTuition'){
             options.reason= $('#reason'+_idx).val();//retrieving and assigning reason to reason variable option
             options.amount = $('#amount'+_idx).val();//retrieving and assigning amount to amount variable option
         }

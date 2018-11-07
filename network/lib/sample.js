@@ -48,7 +48,7 @@ function CreateCourse(register) {
  * @transaction
  */
 function RegisterCourse(register) {
-    if (register.course.status == JSON.stringify(courseStatus.Created) || JSON.parse(register.course.status).code == courseStatus.Dropped.code || (register.course.status == JSON.stringify(courseStatus.RegistrationStatusAccepted) & register.course.registrationStatus == 'Dropped'))
+    if (register.course.status == JSON.stringify(courseStatus.Created) || JSON.parse(register.course.status).code == courseStatus.Dropped.code || (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusAccepted.code & register.course.registrationStatus == 'Dropped'))
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
@@ -103,7 +103,7 @@ function RequestTuition(register) {
  * @transaction
  */
 function PayTuition(register) {
-    if (register.course.status == JSON.stringify(courseStatus.TuitionRequested))
+    if (register.course.status == JSON.stringify(courseStatus.TuitionRequested) || JSON.parse(register.course.status).code == courseStatus.TuitionPaid.code)
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
@@ -126,13 +126,14 @@ function PayTuition(register) {
  * @transaction
  */
 function RefundTuition(register) {
-    if (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusForwarded.code || register.course.status == JSON.stringify(courseStatus.Cancelled))
+    if (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusForwarded.code || (JSON.parse(register.course.status).code == courseStatus.TuitionPaid.code & register.course.amountDue < 0) || register.course.status == JSON.stringify(courseStatus.Cancelled))
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
         register.course.cashier = register.cashier;
         register.course.refundReason = register.reason;
         register.course.amountRefunded += register.amountRefunded;
+        register.course.amountDue += register.amountRefunded;
         register.course.refunded = new Date().toISOString();
         var _status = courseStatus.Refunded;
         _status.text += " in the amount of $" + register.amountRefunded.toString();
