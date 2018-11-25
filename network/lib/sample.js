@@ -25,6 +25,8 @@ var courseStatus = {
     Cancelled: {code: 10, text: 'Course Cancelled'}
 };
 
+var ns = 'org.acme.Z2BTestNetwork';
+
 /**
  * create a course to register
  * @param {org.acme.Z2BTestNetwork.CreateCourse} register - the course to be processed
@@ -39,7 +41,13 @@ function CreateCourse(register) {
     register.course.status = JSON.stringify(courseStatus.Created);
     return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
         .then(function (assetRegistry) {
-            return assetRegistry.update(register.course);
+            return assetRegistry.update(register.course)
+            .then (function (_res) 
+                    {
+                        console.log('z2bEmit called');
+                        z2bEmit('Created', register.course);
+                        return (_res);
+                    }).catch(function(error){return(error);});
         });
 }
 /**
@@ -56,7 +64,13 @@ function RegisterCourse(register) {
         register.course.status = JSON.stringify(courseStatus.Registered);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
-                return assetRegistry.update(register.course);
+                return assetRegistry.update(register.course)
+                .then (function (_res) 
+                    {
+                        console.log('z2bEmit called');
+                        z2bEmit('Registered', register.course);
+                        return (_res);
+                    }).catch(function(error){return(error);});
             });
         }
 }
@@ -74,7 +88,12 @@ function DropCourse(register) {
         register.course.status = JSON.stringify(courseStatus.Dropped);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
-                return assetRegistry.update(register.course);
+                return assetRegistry.update(register.course)
+                .then (function (_res) 
+                    {
+                        z2bEmit('Dropped', register.course);
+                        return (_res);
+                    }).catch(function(error){return(error);});
             });
         }
 }
@@ -93,7 +112,12 @@ function RequestTuition(register) {
         register.course.status = JSON.stringify(courseStatus.TuitionRequested);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
-                return assetRegistry.update(register.course);
+                return assetRegistry.update(register.course)
+                .then (function (_res) 
+                    {
+                        z2bEmit('TuitionRequested', register.course);
+                        return (_res);
+                    }).catch(function(error){return(error);});
             });
         }
 }
@@ -116,7 +140,15 @@ function PayTuition(register) {
         register.course.status = JSON.stringify(_status);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
-                return assetRegistry.update(register.course);
+                return assetRegistry.update(register.course)
+                .then(function (assetRegistry) {
+                    return assetRegistry.update(register.course)
+                    .then (function (_res) 
+                    {
+                        z2bEmit('TuitionPaid', register.course);
+                        return (_res);
+                    }).catch(function(error){return(error);});
+                });
             });
         }
 }
@@ -140,7 +172,12 @@ function RefundTuition(register) {
         register.course.status = JSON.stringify(_status);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
-                return assetRegistry.update(register.course);
+                return assetRegistry.update(register.course)
+                .then (function (_res) 
+                    {
+                        z2bEmit('Refunded', register.course);
+                        return (_res);
+                    }).catch(function(error){return(error);});
             });
         }
 }
@@ -163,7 +200,12 @@ function AcceptRegistrationStatus(register) {
         register.course.amountDue = register.course.creditHours * 100;
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
-                return assetRegistry.update(register.course);
+                return assetRegistry.update(register.course)
+                .then (function (_res) 
+                    {
+                        z2bEmit('RegistrationStatusAccepted', register.course);
+                        return (_res);
+                    }).catch(function(error){return(error);});
             });
     } else if (register.course.status == JSON.stringify(courseStatus.Dropped)){
         register.course.student = register.student;
@@ -177,7 +219,12 @@ function AcceptRegistrationStatus(register) {
         register.course.status = JSON.stringify(_status);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
-                return assetRegistry.update(register.course);
+                return assetRegistry.update(register.course)
+                .then (function (_res) 
+                    {
+                        z2bEmit('RegistrationStatusAccepted', register.course);
+                        return (_res);
+                    }).catch(function(error){return(error);});
             });
     }
 }
@@ -198,7 +245,12 @@ function DenyRegistrationStatus(register) {
         register.course.status = JSON.stringify(_status);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
-                return assetRegistry.update(register.course);
+                return assetRegistry.update(register.course)
+                .then (function (_res) 
+                    {
+                        z2bEmit('RegistrationStatusDenied', register.course);
+                        return (_res);
+                    }).catch(function(error){return(error);});
             });
     }
 }
@@ -219,7 +271,12 @@ function ForwardRegistrationStatus(register) {
         register.course.status = JSON.stringify(_status);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
-                return assetRegistry.update(register.course);
+                return assetRegistry.update(register.course)
+                .then (function (_res) 
+                    {
+                        z2bEmit('RegistrationStatusForwarded', register.course);
+                        return (_res);
+                    }).catch(function(error){return(error);});
             });
     } else {
         console.log('The course status ' + register.course.status + " is not correct");
@@ -239,6 +296,77 @@ function CancelCourse(register) {
         register.course.status = JSON.stringify(courseStatus.Cancelled);
     return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
         .then(function (assetRegistry) {
-            return assetRegistry.update(register.course);
+            return assetRegistry.update(register.course)
+            .then (function (_res) 
+                    {
+                        z2bEmit('CourseCancelled', register.course);
+                        return (_res);
+                    }).catch(function(error){
+                        console.log('Error detected in chaincode:', error);
+                        return(error);});
         });
+}
+
+
+
+function displayObjectValues (_string, _object)
+{
+    for (var prop in _object){
+        console.log(_string+'-->'+prop+':\t '+(((typeof(_object[prop]) === 'object') || (typeof(_object[prop]) === 'function'))  ? typeof(_object[prop]) : _object[prop]));
+    }
+}
+
+
+/*
+* z2bEmit emits an event of the type passed in on param 1
+* all Z2BEvents have one extra parameter, which is the order identifier
+* @param {String} _event - the event to be emitted
+* @param {org.acme.Z2BTestNetwork.Order} _order - the orderID to be associated with this event
+*/
+function z2bEmit(_event, _course)
+{
+    console.log('z2bEmit event', _event);
+    console.log('z2bEmit course', _course );
+    var method = 'z2bEmit';
+    var factory = getFactory();
+    var z2bEvent = factory.newEvent(ns, _event);
+    z2bEvent.courseCode = _course.$identifier;
+    z2bEvent.studentID = _course.student.$identifier;
+
+    console.log(z2bEvent.courseCode);
+    console.log(z2bEvent.studentID);
+    console.log('z2bEmit event:', z2bEvent);
+    switch (_event)
+    {
+        case 'Created':
+        case 'TuitionRequested':
+            break;
+        case 'RegistrationStatusAccepted':
+        case 'RegistrationStatusDenied':
+            z2bEvent.registrarID = _course.registrar.$identifier;
+            break;
+        case 'Registered':
+            z2bEvent.registrarID = _course.registrar.$identifier;
+            break;
+        case 'Dropped':
+            z2bEvent.registrarID = _course.registrar.$identifier;
+            break;
+        case 'RegistrationStatusForwarded':
+            z2bEvent.cashierID = _course.cashier.$identifier;
+            break;
+        case 'TuitionPaid':
+            z2bEvent.cashierID = _course.cashier.$identifier;
+            break;
+        case 'Refunded':
+            break;
+        case 'CourseCancelled':
+            z2bEvent.cashierID = _course.cashier.$identifier;
+            break;
+        default:
+            break;
+    }
+    console.log('Event about to be emitted', z2bEvent);
+    emit(z2bEvent);
+    console.log('Event just emitted', z2bEvent);
+    return;
 }

@@ -28,7 +28,7 @@ let totalAmount = 0;
 /**
  * load the Student User Experience
  */
-function loadStudentUX ()
+function loadStudentUX (unifiedView)
 {
     // get the html page to load
     let toLoad = 'student.html';
@@ -38,23 +38,29 @@ function loadStudentUX ()
     if ((typeof(students) === 'undefined') || (students === null) || (students.length === 0))
     { $.when($.get(toLoad), deferredMemberLoad()).done(function (page, res)
         {
-            setupStudent(page);
+            setupStudent(page, unifiedView);
         });
     }
     else
     {
         $.when($.get(toLoad)).done(function (page)
         {
-            setupStudent(page);
+            setupStudent(page, unifiedView);
         });
     }
 }
     
-    function setupStudent(page)
+    function setupStudent(page, unifiedView)
     {
-    // empty the hetml element that will hold this page
-    $('#body').empty();
-    $('#body').append(page);
+    // empty the html element that will hold this page
+    if (unifiedView){
+        $('#studentbody').empty();
+        $('#studentbody').append(page);
+    }
+    else {
+        $('#body').empty();
+        $('#body').append(page);
+    }
     // empty the buyer alerts array
     student_alerts = [];
     // if there are no alerts, then remove the 'on' class and add the 'off' class
@@ -110,7 +116,6 @@ function clearCourseTable() {
 
 function populateCourseTable(){
     let selectedVal = $('#course').find(':selected').val();
-    console.log(selectedVal == 'blank');
     if (selectedVal == 'blank'){
         $('#submitNewCourse').hide();
         $('#cancelNewCourse').hide();

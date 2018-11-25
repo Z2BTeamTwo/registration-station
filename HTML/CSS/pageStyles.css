@@ -46,7 +46,39 @@ body {height: 100%}
 		margin-right: .125em;
 		overflow: auto;
 	}
-}	
+}
+
+.highlight {
+	border: .125em solid rgb(88, 8, 235);
+	-webkit-border-radius: .5em;
+	  -moz-border-radius: .5em;
+	  border-radius: .5em;
+	  background-color: rgb(252, 245, 151);
+	  font-weight: bold;  
+}
+.notify.on {
+	border-radius: 100%;
+	height: 2em;
+	width: 2em;
+	background-color: rgba(226, 32, 91, 0.77);
+	color: #ffffff;
+	text-align: top;
+	position: relative;
+	top: .4em;
+	float: right;
+	right: .5em;
+	visibility: visible;
+  }
+  .notify.off {
+	visibility: hidden;
+  }
+  .n_count.on { font-size: .5em; font-weight: bold; visibility: visible;}
+  .n_count.off { font-size: .5em; font-weight: bold; visibility: hidden;}
+  h2 {font-size: 1.5em; margin-top: .25em; margin-bottom: .25em;}
+  .strike {
+    position: relative;
+}
+
 .strike {
     position: relative;
 }

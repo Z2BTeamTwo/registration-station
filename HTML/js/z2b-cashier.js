@@ -23,17 +23,17 @@ let cashier_count = '#cashier_count';
 /**
  * load the administration Cashier Experience
  */
-function loadCashierUX ()
+function loadCashierUX(unifiedView)
 {
     console.log(cashiers);
     let toLoad = 'cashier.html';
     if (cashiers.length === 0) 
     { $.when($.get(toLoad), deferredMemberLoad()).done(function (page, res)
-    {setupCashier(page[0]);});
+    {setupCashier(page[0], unifiedView);});
     }
     else{
         $.when($.get(toLoad)).done(function (page)
-        {setupCashier(page);});
+        {setupCashier(page, unifiedView);});
     }
 }
 
@@ -41,13 +41,26 @@ function loadCashierUX ()
  * load the registrar User Experience
  * @param {String} page - page to load
  */
-function setupCashier(page)
+function setupCashier(page, unifiedView)
 {
-    $('#body').empty();
-    $('#body').append(page);
+    if (unifiedView){
+        $('#cashierbody').empty();
+        $('#cashierbody').append(page);
+    } else {
+        $('#body').empty();
+        $('#body').append(page);
+    }
+    
     if (cashier_alerts.length == 0) 
-    {$(cashier_notify).removeClass('on'); $(cashier_notify).addClass('off'); }
-    else {$(cashier_notify).removeClass('off'); $(cashier_notify).addClass('on'); }
+    {
+        $(cashier_notify).removeClass('on');
+        $(cashier_notify).addClass('off');
+    }
+    else {
+        $(cashier_notify).removeClass('off');
+        $(cashier_notify).addClass('on');
+    }
+    
     updatePage('cashier');
     let _clear = $('#cashier_clear');
     let _list = $('#cashierCourseStatus');

@@ -24,17 +24,17 @@ let cashier_id = 'cashier@waketech.edu';
 /**
  * load the administration Seller Experience
  */
-function loadRegistrarUX ()
+function loadRegistrarUX (unifiedView)
 {
     console.log(registrars);
     let toLoad = 'registrar.html';
     if (registrars.length === 0) 
     { $.when($.get(toLoad), deferredMemberLoad()).done(function (page, res)
-    {setupRegistrar(page[0]);});
+    {setupRegistrar(page[0], unifiedView);});
     }
     else{
         $.when($.get(toLoad)).done(function (page)
-        {setupRegistrar(page);});
+        {setupRegistrar(page, unifiedView);});
     }
 }
 
@@ -42,10 +42,16 @@ function loadRegistrarUX ()
  * load the registrar User Experience
  * @param {String} page - page to load
  */
-function setupRegistrar(page)
+function setupRegistrar(page, unifiedView)
 {
-    $('#body').empty();
-    $('#body').append(page);
+    if (unifiedView){
+        $('#registrarbody').empty();
+        $('#registrarbody').append(page);
+    } else {
+        $('#body').empty();
+        $('#body').append(page);
+    }
+    
     if (registrar_alerts.length == 0) 
     {$(registrar_notify).removeClass('on'); $(registrar_notify).addClass('off'); }
     else {$(registrar_notify).removeClass('off'); $(registrar_notify).addClass('on'); }

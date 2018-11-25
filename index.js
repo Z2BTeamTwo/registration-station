@@ -52,8 +52,8 @@ app.use(cookieParser(sessionSecret));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.set('appName', 'registration-station');
-process.title = 'Registration Station';
+app.set('appName', 'z2b-chapter12');
+process.title = 'Z2B-C12';
 app.set('port', appEnv.port);
 
 app.set('views', path.join(__dirname + '/HTML'));

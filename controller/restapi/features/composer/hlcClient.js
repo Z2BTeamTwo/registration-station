@@ -144,8 +144,8 @@ exports.courseAction = function (req, res, next) {
                     updateCourse = factory.newTransaction(NS, 'RegisterCourse');
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', 'registrar@waketech.edu');
                     updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
-                    console.log('\n\n\n\n\n\n\nREGISTER COURSE PAY ATTENTION\n\n\n');
-                    console.log('course', course);
+                    // console.log('\n\n\n\n\n\n\nREGISTER COURSE PAY ATTENTION\n\n\n');
+                    // console.log('course', course);
                     // console.log('Register update course', updateCourse);
                     break;
                 case 'DropCourse':
@@ -153,8 +153,8 @@ exports.courseAction = function (req, res, next) {
                     updateCourse = factory.newTransaction(NS, 'DropCourse');
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
-                    console.log('\n\n\n\n\n\n\nDROP COURSE PAY ATTENTION\n\n\n');
-                    console.log('course', course);
+                    // console.log('\n\n\n\n\n\n\nDROP COURSE PAY ATTENTION\n\n\n');
+                    // console.log('course', course);
                     break;
                 case 'AcceptRegistrationStatus':
                     console.log('Accept Registration Status entered');
@@ -163,8 +163,8 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
                     updateCourse.registrationStatus = req.body.registrationStatus;
-                    console.log('\n\n\n\n\n\n\nACCEPT REG STATUS PAY ATTENTION\n\n\n');
-                    console.log('course', course);
+                    // console.log('\n\n\n\n\n\n\nACCEPT REG STATUS PAY ATTENTION\n\n\n');
+                    // console.log('course', course);
                     break;
                 case 'DenyRegistrationStatus':
                     console.log('Deny Registration Status entered');
@@ -173,8 +173,8 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     // console.log('reason', req.body.reason);
                     updateCourse.reasonForRejection = req.body.reason;
-                    console.log('\n\n\n\n\n\n\nDENY REG STATUS PAY ATTENTION\n\n\n');
-                    console.log('course', course);
+                    // console.log('\n\n\n\n\n\n\nDENY REG STATUS PAY ATTENTION\n\n\n');
+                    // console.log('course', course);
                     break;
                 case 'ForwardRegistrationStatus':
                     console.log('Forward Registration Status entered');
@@ -182,8 +182,8 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', req.body.cashier);
-                    console.log('\n\n\n\n\n\n\nFORWARD REG STATUS PAY ATTENTION\n\n\n');
-                    console.log('course', course);
+                    // console.log('\n\n\n\n\n\n\nFORWARD REG STATUS PAY ATTENTION\n\n\n');
+                    // console.log('course', course);
                     break;
                 case 'CancelCourse':
                     console.log('Cancel course entered');
@@ -192,8 +192,8 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
                     updateCourse.reasonForCancellation = req.body.reason;
-                    console.log('\n\n\n\n\n\n\nCOURSE CANCELLATION PAY ATTENTION\n\n\n');
-                    console.log('course', course);
+                    // console.log('\n\n\n\n\n\n\nCOURSE CANCELLATION PAY ATTENTION\n\n\n');
+                    // console.log('course', course);
                     break;
                 case 'RequestTuition':
                     console.log('Please Pay Shown Amount');
@@ -201,9 +201,9 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.student = factory.newRelationship(NS, 'Student', course.student.$identifier);
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
-                    console.log('\n\n\n\n\n\n\nTUITION PAYMENT PAY ATTENTION\n\n\n');
-                    console.log('course', course);
-                    console.log('transaction', updateCourse);
+                    // console.log('\n\n\n\n\n\n\nTUITION PAYMENT PAY ATTENTION\n\n\n');
+                    // console.log('course', course);
+                    // console.log('transaction', updateCourse);
                     break;
                 case 'PayTuition':
                     console.log('Pay Tuition entered');
@@ -212,9 +212,9 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.registrar = factory.newRelationship(NS, 'Registrar', course.registrar.$identifier);
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
                     updateCourse.amountPaid = parseFloat(req.body.amount);
-                    console.log('\n\n\n\n\n\n\nTUITION PAYMENT PAY ATTENTION\n\n\n');
-                    console.log('course', course);
-                    console.log('transaction', updateCourse);
+                    // console.log('\n\n\n\n\n\n\nTUITION PAYMENT PAY ATTENTION\n\n\n');
+                    // console.log('course', course);
+                    // console.log('transaction', updateCourse);
                     break;
                 case 'RefundTuition':
                     console.log('We are Giving You Your Money Back');
@@ -224,11 +224,11 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
                     updateCourse.amountRefunded = parseFloat(req.body.amount);
                     updateCourse.reason = req.body.reason;
-                    console.log('\n\n\n\n\n\n\n\nCOURSE REFUND PAY ATTENTION\n\n\n');
-                    console.log('course', course);
+                    //console.log('\n\n\n\n\n\n\n\nCOURSE REFUND PAY ATTENTION\n\n\n');
+                    //console.log('course', course);
                     break;
                 default :
-                    console.log('default entered for action: '+req.body.action);
+                    // console.log('default entered for action: '+req.body.action);
                     res.send({'result': 'failed', 'error':' course '+req.body.courseNo+' unrecognized request: '+req.body.action});
                 }
                 updateCourse.course = factory.newRelationship(NS, 'Course', course.$identifier);
@@ -356,6 +356,7 @@ exports.addCourse = function (req, res, next) {
  */
 function _monitor(locals, _event)
 {
+    console.log('in _monitor');
     let method = '_monitor';
     console.log(method+ ' _event received: '+_event.$type+' for course: '+_event.courseCode);
     // create an event object and give it the event type, the orderID, the buyer id and the eventID
@@ -377,48 +378,32 @@ function _monitor(locals, _event)
     case 'Created':
         break;
     case 'Registered':
+    case 'Dropped':
+        event.ID = _event.registrarID;
+        svc.send(locals, 'Alert',JSON.stringify(event));
+        break;
     case 'RegistrationStatusAccepted':
-        event.ID = _event.sellerID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
-        event.ID = _event.financeCoID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
+    case 'RegistrationStatusDenied':
+        event.ID = _event.studentID;
+        svc.send(locals, 'Alert', JSON.stringify(event));
         break;
-    case 'Ordered':
-    case 'Cancelled':
-    case 'Backordered':
-        event.ID = _event.sellerID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
-        event.ID = _event.providerID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
+    case 'RegistrationStatusForwarded':
+        event.ID = _event.studentID;
+        svc.send(locals, 'Alert', JSON.stringify(event));
+        event.ID = _event.cashierID;
+        svc.send(locals, 'Alert', JSON.stringify(event));
         break;
-    case 'ShipRequest':
-    case 'DeliveryStarted':
-    case 'DeliveryCompleted':
-        event.ID = _event.sellerID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
-        event.ID = _event.providerID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
-        event.ID = _event.shipperID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
+    case 'TuitionPaid':
+        event.ID = _event.cashierID;
+        svc.send(locals, 'Alert', JSON.stringify(event));
         break;
-    case 'DisputeOpened':
-    case 'Resolved':
     case 'Refunded':
-    case 'Paid':
-        event.ID = _event.sellerID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
-        event.ID = _event.providerID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
-        event.ID = _event.shipperID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
-        event.ID = _event.financeCoID;
+        event.ID = _event.cashierID;
         svc.send(locals, 'Alert',JSON.stringify(event));
         break;
-    case 'PaymentAuthorized':
-        event.ID = _event.sellerID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
-        event.ID = _event.financeCoID;
-        svc.send(locals, 'Alert',JSON.stringify(event));
+    case 'CourseCancelled':
+        event.ID = _event.studentID;
+        svc.send(locals, 'Alert', JSON.stringify(event));
         break;
     default:
         break;
@@ -442,7 +427,7 @@ exports.init_z2bEvents = function (req, res, next)
 //        svc.createAlertSocket();
         let businessNetworkConnection;
         businessNetworkConnection = new BusinessNetworkConnection();
-        businessNetworkConnection.setMaxListeners(50);
+        businessNetworkConnection.setMaxListeners(200);
         //
         // v0.14
         // return businessNetworkConnection.connect(config.composer.connectionProfile, config.composer.network, config.composer.adminID, config.composer.adminPW)
@@ -454,10 +439,12 @@ exports.init_z2bEvents = function (req, res, next)
             // when an event is provided, call the _monitor function, passing in the al_connection, f_connection and event information
             businessNetworkConnection.on('event', (event) => {_monitor(req.app.locals, event); });
             res.send('event registration complete');
+            //console.log('on init seems to have been successful');
         }).catch((error) => {
             // if an error is encountered, log the error and send it back to the requestor
             console.log(method+' business network connection failed'+error.message);
             res.send(method+' business network connection failed'+error.message);
+            //console.log('on init seems to have been unsuccessful');
         });
     }
 };

@@ -17,6 +17,7 @@
   */
 namespace composer.events
 
+/** 
 abstract event BasicEvent {
 }
 
@@ -89,3 +90,4 @@ event Paid extends BasicEvent {
   o String orderID
   o String orderNumber
 }
+*/

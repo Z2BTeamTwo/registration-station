@@ -15,7 +15,7 @@
       "idx_preload": "Preload Network"
     },
     "admin": {
-      "title": "Registration - Admin",
+      "title": "Registration Station - Admin",
       "npm": "Network Profile Management",
       "npm_API": "API",
       "npm_param": "Parameters",
@@ -127,11 +127,6 @@
       "cancel": "Cancel",
       "submit": "Submit"
     },
-    "provider": {
-      "title": "Provider Chapter 5, Select Provider to see their view: ",
-      "provider_clear": "Clear Window",
-      "providerOrderStatus": "Display Order Status"
-    },
     "removeMember": {
       "rm_type": "Type",
       "rm_members": "Members",
@@ -143,14 +138,14 @@
       "submit": "Submit"
     },
     "registrar": {
-      "title": "Registrar View",
+      "title": "Registration Station - Registrar",
       "registrar_clear": "Clear Window",
       "registrarCourseStatus": "Display Order Status"
     },
     "cashier": {
-      "title": "Shipper Chapter 5, Select Shipper to see their view: ",
+      "title": "Registration Station - Cashier",
       "cashier_clear": "Clear Window",
-      "cashierCourseStatus": "Display Order Status    "
+      "cashierCourseStatus": "Display Order Status"
     },
     "singleUX": {},
     "courseProcess": {
