@@ -35,7 +35,7 @@ var ns = 'org.acme.Z2BTestNetwork';
 function CreateCourse(register) {
     console.log("In create course.");
     register.course.student = register.student;
-    register.course.amountDue = register.amount;
+    register.course.amountDue = 0.00;
     register.course.amountPaid = 0.00;
     register.course.created = new Date().toISOString();
     register.course.status = JSON.stringify(courseStatus.Created);
@@ -133,7 +133,6 @@ function PayTuition(register) {
         register.course.registrar = register.registrar;
         register.course.cashier = register.cashier;
         register.course.amountPaid += register.amountPaid;
-        register.course.amountDue -= register.amountPaid;
         register.course.tuitionPaid = new Date().toISOString();
         var _status = courseStatus.TuitionPaid;
         _status.text += " Amount due: $" + register.course.amountDue.toString();
@@ -165,7 +164,6 @@ function RefundTuition(register) {
         register.course.cashier = register.cashier;
         register.course.refundReason = register.reason;
         register.course.amountRefunded += register.amountRefunded;
-        register.course.amountDue += register.amountRefunded;
         register.course.refunded = new Date().toISOString();
         var _status = courseStatus.Refunded;
         _status.text += " in the amount of $" + register.amountRefunded.toString();
@@ -291,6 +289,7 @@ function CancelCourse(register) {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
         register.course.cancelReason = register.reasonForCancellation;
+        register.course.amountDue = 0;
         register.course.registrationStatus = "Cancelled";
         register.course.courseCancelled = new Date().toISOString();
         register.course.status = JSON.stringify(courseStatus.Cancelled);
