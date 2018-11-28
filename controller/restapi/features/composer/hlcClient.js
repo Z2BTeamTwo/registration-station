@@ -293,10 +293,10 @@ exports.addCourse = function (req, res, next) {
         factory = businessNetworkConnection.getBusinessNetwork().getFactory();
         let course = factory.newResource(NS, 'Course', courseCode);
         course = svc.createCourseTemplate(course);
-        course.amountDue = courseData.creditHours * 100;
         course.courseCode = courseCode;
         course.creditHours = courseData.creditHours;
         course.courseTitle = courseData.courseTitle;
+        course.schedule = courseData.schedule;
         course.student = factory.newRelationship(NS, 'Student', req.body.student);
         course.registrar = factory.newRelationship(NS, 'Registrar', 'noop@dummy');
         course.cashier = factory.newRelationship(NS, 'Cashier', 'noop@dummy');
@@ -306,7 +306,6 @@ exports.addCourse = function (req, res, next) {
 
         createNew.course = factory.newRelationship(NS, 'Course', course.$identifier);
         createNew.student = factory.newRelationship(NS, 'Student', req.body.student);
-        createNew.amount = course.amountDue;
         // add the order to the asset registry.
         return businessNetworkConnection.getAssetRegistry(NS+'.Course')
         .then((assetRegistry) => {

@@ -230,9 +230,9 @@ function formatCourses(_target, _courses)
     let _str = ''; let _date = '';
     for (let each in _courses)
     {(function(_idx, _arr)
-      {let _action = '<th><select id=student_action'+_idx+'><option value="'+textPrompts.courseProcess.NoAction.select+'">'+textPrompts.courseProcess.NoAction.message+'</option>';
+      {let _action = '<select id=student_action'+_idx+'><option value="'+textPrompts.courseProcess.NoAction.select+'">'+textPrompts.courseProcess.NoAction.message+'</option>';
         let r_string;
-        r_string = '</th>';
+        r_string = '';
         //
         // each order can have different states and the action that a buyer can take is directly dependent on the state of the order.
         // this switch/case table displays selected order information based on its current status and displays selected actions, which
@@ -242,6 +242,7 @@ function formatCourses(_target, _courses)
         // These are the text strings which will be displayed in the browser and are retrieved from the prompts.json file
         // associated with the language selected by the web user.
         //
+        console.log(_arr[_idx]);
         switch (JSON.parse(_arr[_idx].status).code)
         {
         case courseStatus.Created.code:
@@ -304,12 +305,35 @@ function formatCourses(_target, _courses)
             break;
         }
         
-        let _button = '<th><button id="student_btn_'+_idx+'">'+textPrompts.courseProcess.ex_button+'</button></th>';
+        let _button = '<button id="student_btn_'+_idx+'">'+textPrompts.courseProcess.ex_button+'</button>';
         _action += '</select>';
         if (_idx > 0) {_str += '<div class="spacer"></div>';}
-        _str += '<table class="wide"><tr><th>'+textPrompts.courseProcess.courseCode+'</th><th>'+textPrompts.courseProcess.status+'</th><th class="right">'+textPrompts.courseProcess.amountDue+'</th></tr>';
-        _str += '<tr><th id ="student_order'+_idx+'" width="20%">'+_arr[_idx].id+'</th><th width="50%" id="b_status'+_idx+'">'+JSON.parse(_arr[_idx].status).text+': '+_date+'</th><th class="right">$'+_arr[_idx].amountDue+'.00</th>'+_action+r_string+_button+'</tr></table>';
-        _str += '</table>';
+        let amountToBePaid = _arr[_idx].amountDue - _arr[_idx].amountPaid + _arr[_idx].amountRefunded;
+        _str += '<div class="accordion" id="courseAccordion">';
+        _str += '<div class="card">';
+        _str += '<div class="card-header alert alert-success" id="course' + _idx + '">';
+        _str += '<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' + _idx + '" aria-expanded="false" aria-controls="collapse' + _idx + '">';
+        _str += _arr[_idx].courseCode.substr(0, 6) + ' ' + _arr[_idx].courseTitle + '</button><br/>' + JSON.parse(_arr[_idx].status).text + ' ';
+        _str += _date + ' ';
+        if (amountToBePaid >= 0){
+            _str += 'Amount to be Paid: $' + amountToBePaid;
+        } else {
+            _str += 'Amount to be Refunded: $' + amountToBePaid * -1;
+        }
+        _str += '<br/>' + _action + ' ' + _button;
+        _str += '</div>';
+        _str += '<div id="collapse' + _idx + '" class="collapse" aria-labelledby="collapse' + _idx + '" data-parent="#courseAccordion">';
+        _str += '<div class="card-body">';
+        _str += 'Course Code: ' + _arr[_idx].courseCode + '<br/>';
+        _str += 'Schedule: ' + _arr[_idx].schedule + '<br/>';
+        _str += 'Credit Hours: ' + _arr[_idx].creditHours + '<br/>';
+        _str += 'Amount Paid: $' + _arr[_idx].amountPaid + '<br/>';
+        _str += 'Amount Due: $' + _arr[_idx].amountDue + '<br/>';
+        _str += 'Amount Refunded: $' + _arr[_idx].amountRefunded + '<br/>';
+        _str += '</div>';
+        _str += '</div>';
+        _str += '</div>';
+        
 
         // TODO do an on change to hide and show the prompt when you change the selection on the action to take
 
@@ -327,7 +351,7 @@ function formatCourses(_target, _courses)
                 {
                 let options = {};
                 options.action = $('#student_action'+_idx).find(':selected').val();
-                options.courseCode = $('#student_order'+_idx).text();
+                options.courseCode = _arr[_idx].courseCode;
                 options.participant = $('#student').val();
                 if ((options.action === 'PayTuition'))
                 {options.amount = $('#student_amount'+_idx).val();}
@@ -337,7 +361,7 @@ function formatCourses(_target, _courses)
             });
             // use the notifyMe function to determine if this order is in the alert array. 
             // if it is, the highlight the $('#b_status'+_idx) html element by adding the 'highlight' class
-            if (notifyMe(student_alerts, _arr[_idx].id)) {$('#student_status'+_idx).addClass('highlight'); }
+            if (notifyMe(student_alerts, _arr[_idx].id)) {$('#course'+_idx).addClass('highlight'); }
         })(each, _courses);
     }
     // reset the b_alerts array to a new array

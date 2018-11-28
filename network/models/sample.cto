@@ -56,7 +56,6 @@ asset Course identified by courseCode {
 }
 
   transaction CreateCourse {
-    o Integer amount
     --> Course course
     --> Student student
   }

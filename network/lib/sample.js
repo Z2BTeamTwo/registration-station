@@ -37,8 +37,10 @@ function CreateCourse(register) {
     register.course.student = register.student;
     register.course.amountDue = 0.00;
     register.course.amountPaid = 0.00;
+    register.course.amountRefunded = 0.00;
     register.course.created = new Date().toISOString();
     register.course.status = JSON.stringify(courseStatus.Created);
+    console.log('Course status is', register.course.status);
     return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
         .then(function (assetRegistry) {
             return assetRegistry.update(register.course)
