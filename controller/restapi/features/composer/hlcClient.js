@@ -383,12 +383,8 @@ function _monitor(locals, _event)
         break;
     case 'RegistrationStatusAccepted':
     case 'RegistrationStatusDenied':
-        event.ID = _event.studentID;
-        svc.send(locals, 'Alert', JSON.stringify(event));
         break;
     case 'RegistrationStatusForwarded':
-        event.ID = _event.studentID;
-        svc.send(locals, 'Alert', JSON.stringify(event));
         event.ID = _event.cashierID;
         svc.send(locals, 'Alert', JSON.stringify(event));
         break;
@@ -401,8 +397,6 @@ function _monitor(locals, _event)
         svc.send(locals, 'Alert',JSON.stringify(event));
         break;
     case 'CourseCancelled':
-        event.ID = _event.studentID;
-        svc.send(locals, 'Alert', JSON.stringify(event));
         break;
     default:
         break;

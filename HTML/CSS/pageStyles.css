@@ -128,26 +128,29 @@ p.message{
 .blockchain {
 	background-color: black;
 	position: fixed;
-	height: 8%;
-	margin-left: 1%;
-	width: 95%;
-	top: 92%;
+	height: 10%;
+	margin-left: 0%;
+	width: 100%;
+	top: 90%;
 	padding: 4px;
 	overflow-x: auto;
     overflow-y: hidden;
-    white-space: nowrap;}
+	white-space: nowrap;
+}
+
 .block {
 	background-color: blue;
 	color: white;
 	display: inline-block;
 	padding: 2px;
 	margin: 5px;
-	height: 90%;
+	height: 70%;
     vertical-align: middle;
 	text-overflow: 	wrap;
 	width: 290px;
 	word-wrap: break-word;
 	white-space: normal;
+	font-size: 8px;
 }
 .bottom-hold{
 	position: fixed;
@@ -156,10 +159,7 @@ p.message{
 	width: 90%;
 	top: 85%;
 }
-.container{
-	width: 100%;
-}
-table {border: 1px solid #0000ff;}
+
  th {text-align: center; font-style: bold; font-size: 1em; padding: .25em;}
  td { border: 1px solid #0000ff; padding-left: .25em; padding-right: .25em}
  th.right {text-align: right; font-style: bold; font-size: 1em; padding: .25em;}
@@ -333,7 +333,7 @@ table {border: 1px solid #0000ff;}
 .mic_disabled {
 	opacity: 0.6
 }
-.tutorial {background: #D0D0D0; color: #404040; height: 100%}
+.tutorial {background: #f7f8f9; color: #000000; height: 100%}
 
 .navbar {
   margin-bottom: 0px;

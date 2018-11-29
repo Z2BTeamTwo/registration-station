@@ -133,7 +133,7 @@ function goEventInitialize()
 /**
  * @param {Event} _event - inbound Event
  * @param {String} _id - subscriber target
- * @param {String} _orderID - inbound order id
+ * @param {String} _courseCode - inbound order id
  */
 function addNotification(_event, _id, _courseCode)
 {
