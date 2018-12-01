@@ -32,7 +32,6 @@ function loadSingleUX ()
         loadStudentUX(true);
         loadRegistrarUX(true);
         loadCashierUX(true);
-        //loadAdvisorUX(true);
         // Initialize Registration for all Z2B Business Events
         goEventInitialize();
     });
@@ -50,6 +49,8 @@ function loadSingleUX ()
             goEventInitialize();
         });
     }
+
+    updatePage('unified');
 }
 /**
  * load all of the members in the network for use in the different user experiences. This is a synchronous routine and is executed autormatically on web app start. 

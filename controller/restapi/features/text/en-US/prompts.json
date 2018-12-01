@@ -69,8 +69,8 @@
     },
     "student": {
       "title": "Registration Station - Student",
-      "newCourse": "Create New Course",
-      "courseStatus": "Display Course Status"
+      "newCourse": "Add Course",
+      "courseStatus": "Display Courses"
     },
     "createConnectionProfile": {
       "title": "type the name of the new profile here: ",
@@ -102,13 +102,13 @@
     },
     "createCourse": {
       "title": "Create New Course",
-      "cn_on": "Course Code",
-      "cn_status": "Status",
-      "cn_date": "Date",
-      "cn_title": "Course Title",
-      "cn_sched": "Course Schedule",
-      "cn_hours": "Credit Hours",
-      "cn_total": "Total",
+      "cn_on": "Course Code:",
+      "cn_status": "Status:",
+      "cn_date": "Date:",
+      "cn_title": "Course Title:",
+      "cn_sched": "Course Schedule:",
+      "cn_hours": "Credit Hours:",
+      "cn_total": "Total:",
       "cancelNewCourse": "Cancel",
       "submitNewCourse": "Submit"
     },
@@ -140,12 +140,15 @@
     "registrar": {
       "title": "Registration Station - Registrar",
       "registrar_clear": "Clear Window",
-      "registrarCourseStatus": "Display Order Status"
+      "registrarCourseStatus": "Display Courses"
     },
     "cashier": {
       "title": "Registration Station - Cashier",
       "cashier_clear": "Clear Window",
-      "cashierCourseStatus": "Display Order Status"
+      "cashierCourseStatus": "Display Courses"
+    },
+    "unified": {
+      "title": "Registration Station - Unified View"
     },
     "singleUX": {},
     "courseProcess": {

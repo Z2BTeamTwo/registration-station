@@ -93,15 +93,17 @@ body {height: 100%}
 .student { background-color: #EFCEDC; }
 .registrar { background-color: rgb(230, 238, 230);}
 .cashier { background-color: #8A99D3;}
+
 .messagePane{
 	height: 3.5em;
 	margin-left: 0px;
-	width: 100%;
-	overflow: auto;
+	width: 425px;
+	overflow-x: scroll;
+	overflow-y: scroll;
 }
 p.message{
 	color: #824301;
-	font-size: 1.125em;
+	font-size: 1em;
 	margin: .125em;
 	padding: 0px;
 	text-align: left;
@@ -333,7 +335,7 @@ p.message{
 .mic_disabled {
 	opacity: 0.6
 }
-.tutorial {background: #f7f8f9; color: #000000; height: 100%}
+.tutorial {background: #f7f8f9; color: #404040; height: 100%}
 
 .navbar {
   margin-bottom: 0px;
@@ -396,11 +398,28 @@ tr.hideRow {display: none;}
 	float: right;
 }
 
+
 .user_dialog {
 	color: black;
 	font-size: 12px;
 	text-align: left;
 	width: 60%
+}
+
+.label {
+	font-weight: bold;
+}
+
+.noborder {
+	border:none;
+}
+
+.regname {
+	margin-bottom: 12px;
+}
+
+.casname {
+	margin-bottom: 12px;
 }
 .glyphicon-thumbs-up, .ok {background: #00FF00; font-size: 1.5em;}
 .glyphicon-thumbs-down, .fail {background: #FF0000; font-size: 1.5em;}

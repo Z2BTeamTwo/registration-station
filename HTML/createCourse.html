@@ -1,14 +1,41 @@
-<div>
-    <h3 id="title"></h3>
-    <table width="100%">
-            <h4><span id="selectCourse"></span><select id="course"></select></h4>
-        <tr><th id="cn_on"></th><th id="cn_status"></th><th id="cn_date"></th><th id="cn_title"></th><th id="cn_sched"></th><th id="cn_hours"></th><th id="cn_total"></th></tr>
-        <tr><td id="courseCode" align="center"></td><td id="status" align="center"></td><td id="today" align="center"></td><td id="courseTitle" align="center"></td><td id="schedule" align="center"></td><td id="creditHours" align="center"></td><td id="amount" align="right"></td></tr>
-    </table>
-</div>
+
+<h3 id="title"></h3>
+<span id="selectCourse"></span><select id="course"></select>
+<br/>
+<br/>
+<table>
+    <tr>
+        <td class="noborder"><span id="cn_on" class="label"></span></td>
+        <td class="noborder"><span id="courseCode"></span></td>
+    </tr>
+    <tr>
+        <td class="noborder"><span id="cn_status" class="label"></span></td>
+        <td class="noborder"><span id="status"></span></td>
+    </tr>
+    <tr>
+        <td class="noborder"><span id="cn_date" class="label"></span></td>
+        <td class="noborder"><span id ="today"></span></td>
+    </tr>
+    <tr>
+        <td class="noborder"><span id="cn_title" class="label"></span></td>
+        <td class="noborder"><span id ="courseTitle"></span></td>
+    </tr>
+    <tr>
+        <td class="noborder"><span id="cn_sched" class="label"></span></td>
+        <td class="noborder"><span id ="schedule"></span></td>
+    </tr>
+    <tr>
+        <td class="noborder"><span id="cn_hours" class="label"></span></td>
+        <td class="noborder"><span id ="creditHours"></span></td>
+    </tr>
+    <tr>
+        <td class="noborder"><span id="cn_total" class="label"></span></td>
+        <td class="noborder"><span id ="amount"></span></td>
+    </tr>
+</table>
 <br/>
 <div>
-    <button class-"wide" id="cancelNewCourse"></button> 
-    <button class-"wide" id="submitNewCourse"></button>
+    <button type="button" class="btn btn-light" id="cancelNewCourse"></button> 
+    <button type="button" class="btn btn-light" id="submitNewCourse"></button>
 </div>
 <br/>

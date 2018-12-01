@@ -228,6 +228,7 @@ function formatCourses(_target, _courses)
 {
     _target.empty();
     let _str = ''; let _date = '';
+    _str += '<div class="accordion" id="courseAccordion">';
     for (let each in _courses)
     {(function(_idx, _arr)
       {let _action = '<select id=student_action'+_idx+'><option value="'+textPrompts.courseProcess.NoAction.select+'">'+textPrompts.courseProcess.NoAction.message+'</option>';
@@ -261,14 +262,14 @@ function formatCourses(_target, _courses)
             _date = _arr[_idx].tuitionRequested;
             _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
             _action += '<option value="'+textPrompts.courseProcess.PayTuition.select+'">'+textPrompts.courseProcess.PayTuition.message+'</option>';
-            r_string = '<br/>'+textPrompts.courseProcess.PayTuition.prompt+'<input id="student_amount'+_idx+'" type="text"></input></th>';
+            r_string = textPrompts.courseProcess.PayTuition.prompt+'<input id="student_amount'+_idx+'" type="text"></input></th>';
             break;
         case courseStatus.TuitionPaid.code:
             _date = _arr[_idx].tuitionPaid;
             _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
             if (_arr[_idx].amountDue > 0){
                 _action += '<option value="'+textPrompts.courseProcess.PayTuition.select+'">'+textPrompts.courseProcess.PayTuition.message+'</option>';
-                r_string = '<br/>'+textPrompts.courseProcess.PayTuition.prompt+'<input id="student_amount'+_idx+'" type="text"></input></th>';
+                r_string = textPrompts.courseProcess.PayTuition.prompt+'<input id="student_amount'+_idx+'" type="text"></input></th>';
             }
             break;
         case courseStatus.Refunded.code:
@@ -307,38 +308,64 @@ function formatCourses(_target, _courses)
         
         let _button = '<button id="student_btn_'+_idx+'">'+textPrompts.courseProcess.ex_button+'</button>';
         _action += '</select>';
-        if (_idx > 0) {_str += '<div class="spacer"></div>';}
+        //if (_idx > 0) {_str += '<div class="spacer"></div>';}
         let amountToBePaid = _arr[_idx].amountDue - _arr[_idx].amountPaid + _arr[_idx].amountRefunded;
-        _str += '<div class="accordion" id="courseAccordion">';
         _str += '<div class="card">';
         _str += '<div class="card-header alert alert-success" id="course' + _idx + '">';
         _str += '<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' + _idx + '" aria-expanded="false" aria-controls="collapse' + _idx + '">';
         _str += _arr[_idx].courseCode.substr(0, 6) + ' ' + _arr[_idx].courseTitle + '</button><br/>' + JSON.parse(_arr[_idx].status).text + ' ';
         _str += _date + ' ';
-        if (amountToBePaid >= 0){
-            _str += 'Amount to be Paid: $' + amountToBePaid;
+        if (amountToBePaid > 0){
+            _str += '<br/>Amount to be Paid: $' + amountToBePaid;
         } else {
-            _str += 'Amount to be Refunded: $' + amountToBePaid * -1;
+            _str += '<br/>Amount to be Refunded: $' + amountToBePaid * -1;
         }
         _str += '<br/>' + _action + ' ' + _button;
+        _str += '<div id="r_string' + _idx + '">' + r_string; + '</div>';
         _str += '</div>';
         _str += '<div id="collapse' + _idx + '" class="collapse" aria-labelledby="collapse' + _idx + '" data-parent="#courseAccordion">';
         _str += '<div class="card-body">';
-        _str += 'Course Code: ' + _arr[_idx].courseCode + '<br/>';
-        _str += 'Schedule: ' + _arr[_idx].schedule + '<br/>';
-        _str += 'Credit Hours: ' + _arr[_idx].creditHours + '<br/>';
-        _str += 'Amount Paid: $' + _arr[_idx].amountPaid + '<br/>';
-        _str += 'Amount Due: $' + _arr[_idx].amountDue + '<br/>';
-        _str += 'Amount Refunded: $' + _arr[_idx].amountRefunded + '<br/>';
+        _str += '<span class="label">Course Code</span><br/>' + _arr[_idx].courseCode + '<br/>';
+        _str += '<span class="label">Schedule</span><br/>' + _arr[_idx].schedule + '<br/>';
+        _str += '<span class="label">Credit Hours</span> ' + _arr[_idx].creditHours + '<br/>';
+        _str += '<span class="label">Amount Paid</span> $' + _arr[_idx].amountPaid + '<br/>';
+        _str += '<span class="label">Amount Due</span> $' + _arr[_idx].amountDue + '<br/>';
+        _str += '<span class="label">Amount Refunded</span> $' + _arr[_idx].amountRefunded + '<br/>';
         _str += '</div>';
         _str += '</div>';
         _str += '</div>';
+
         
 
-        // TODO do an on change to hide and show the prompt when you change the selection on the action to take
+
+        $(document).ready(function(){
+                $('#r_string' + _idx).hide();
+                $('#student_action'+_idx).on('click', function ()
+                {
+                let action;
+                action = $('#student_action'+_idx).find(':selected').val();
+                
+                switch (action)
+                {
+                    case 'NoAction':
+                    case 'Register':
+                    case 'Drop':
+                        $('#r_string' + _idx).hide();
+                        break;
+                    case 'PayTuition':
+                        $('#student_amount' + _idx).val('');
+                        $('#r_string' + _idx).show();
+                        break;
+                    default:
+                        break;
+
+                }
+            });
+        });
 
     })(each, _courses);
     }
+    _str += '</div>';
     // append the newly built order table to the web page
     _target.append(_str);
     //
