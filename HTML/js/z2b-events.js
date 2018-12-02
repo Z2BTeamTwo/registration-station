@@ -73,6 +73,7 @@ function memberLoad ()
         students_string = _getMembers(students);
         registrars_string = _getMembers(registrars);
         cashiers_string = _getMembers(cashiers);
+        console.log('Students array', students);
 
         });
 }
@@ -118,8 +119,9 @@ function deferredMemberLoad()
 function _getMembers(_members)
 {
     let _str = '';
+    console.log('get members array', _members);
     for (let each in _members)
-    {(function(_idx, _arr){_str +='<option value="'+_arr[_idx].id+'">' +_arr[_idx].companyName+'</option>';})(each, _members);}
+    {(function(_idx, _arr){_str +='<option value="'+_arr[_idx].id+'">' +_arr[_idx].participantName+'</option>';})(each, _members);}
     _str += '</select>';
     return _str;
 }

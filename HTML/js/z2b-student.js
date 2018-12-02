@@ -141,6 +141,23 @@ function populateCourseTable(){
 /**
  * Displays the create course form for the selected student
  */
+
+function getStudentName(studentId){
+    // console.log('in getstudentname looking for', studentId);
+    let studentName = 'Not found';
+    for(let student in students){
+        (function (_idx, _arr){
+            // console.log('In for loop', _arr[_idx]);
+        if (_arr[_idx].id == studentId){
+            // console.log('Found!');
+            studentName = _arr[_idx].participantName;
+        }
+    })(student, students);
+    }
+
+    return studentName;
+}
+
 function displayCourseForm()
 {  let toLoad = 'createCourse.html';
     totalAmount = 0;
@@ -311,13 +328,13 @@ function formatCourses(_target, _courses)
         //if (_idx > 0) {_str += '<div class="spacer"></div>';}
         let amountToBePaid = _arr[_idx].amountDue - _arr[_idx].amountPaid + _arr[_idx].amountRefunded;
         _str += '<div class="card">';
-        _str += '<div class="card-header alert alert-success" id="course' + _idx + '">';
+        _str += '<div class="card-header" id="course' + _idx + '">';
         _str += '<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' + _idx + '" aria-expanded="false" aria-controls="collapse' + _idx + '">';
         _str += _arr[_idx].courseCode.substr(0, 6) + ' ' + _arr[_idx].courseTitle + '</button><br/>' + JSON.parse(_arr[_idx].status).text + ' ';
         _str += _date + ' ';
         if (amountToBePaid > 0){
             _str += '<br/>Amount to be Paid: $' + amountToBePaid;
-        } else {
+        } else if (amountToBePaid < 0) {
             _str += '<br/>Amount to be Refunded: $' + amountToBePaid * -1;
         }
         _str += '<br/>' + _action + ' ' + _button;
@@ -340,7 +357,7 @@ function formatCourses(_target, _courses)
 
         $(document).ready(function(){
                 $('#r_string' + _idx).hide();
-                $('#student_action'+_idx).on('click', function ()
+                $('#student_action'+_idx).on('change', function ()
                 {
                 let action;
                 action = $('#student_action'+_idx).find(':selected').val();
@@ -381,7 +398,10 @@ function formatCourses(_target, _courses)
                 options.courseCode = _arr[_idx].courseCode;
                 options.participant = $('#student').val();
                 if ((options.action === 'PayTuition'))
-                {options.amount = $('#student_amount'+_idx).val();}
+                {
+                    options.amount = $('#student_amount'+_idx).val();
+                }
+                console.log(options);
                 $('#student_messages').prepend(formatMessage(options.action+textPrompts.courseProcess.processing_msg.format(options.action, options.courseCode)+options.courseCode));
                 $.when($.post('/composer/client/courseAction', options)).done(function (_results)
                 { $('#student_messages').prepend(formatMessage(_results.result)); });

@@ -67,7 +67,7 @@ rule netAccessStudent{
 *
 **/
 rule RegistrarACL {
-    description: "Allow registrar full access to order where they are listed as registrar"
+    description: "Allow registrar full access to course where they are listed as registrar"
     participant(m): "org.acme.Z2BTestNetwork.Registrar"
     operation: READ, UPDATE
     resource(v): "org.acme.Z2BTestNetwork.Course"

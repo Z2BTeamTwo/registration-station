@@ -172,7 +172,7 @@ function formatRegistrarCourses(_target, _courses)
         //if (_idx > 0) {_str += '<div class="spacer"></div>';}
         let amountToBePaid = _arr[_idx].amountDue - _arr[_idx].amountPaid + _arr[_idx].amountRefunded;
         _str += '<div class="card">';
-        _str += '<div class="card-header alert alert-success" id="course' + _idx + '">';
+        _str += '<div class="card-header" id="course' + _idx + '">';
         _str += '<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' + _idx + '" aria-expanded="false" aria-controls="collapse' + _idx + '">';
         _str += _arr[_idx].courseCode.substr(0, 6) + ' ' + _arr[_idx].courseTitle + '</button><br/>' + JSON.parse(_arr[_idx].status).text + ' ';
         _str += _date + ' ';
@@ -186,17 +186,21 @@ function formatRegistrarCourses(_target, _courses)
         _str += '</div>';
         _str += '<div id="collapse' + _idx + '" class="collapse" aria-labelledby="collapse' + _idx + '" data-parent="#courseAccordion">';
         _str += '<div class="card-body">';
-        _str += '<span class="label">Student</span><br/>' + _arr[_idx].student.participantName;
+        _str += '<span class="label">Student</span><br/>' + getStudentName(_arr[_idx].student.split('#')[1]) + '<br/>';
         _str += '<span class="label">Course Code</span><br/>' + _arr[_idx].courseCode + '<br/>';
         _str += '<span class="label">Schedule</span><br/>' + _arr[_idx].schedule + '<br/>';
         _str += '<span class="label">Credit Hours</span> ' + _arr[_idx].creditHours + '<br/>';
         _str += '<span class="label">Amount Paid</span> $' + _arr[_idx].amountPaid + '<br/>';
         _str += '<span class="label">Amount Due</span> $' + _arr[_idx].amountDue + '<br/>';
         _str += '<span class="label">Amount Refunded</span> $' + _arr[_idx].amountRefunded + '<br/>';
+        if(_arr[_idx].registrationStatus != '' & _arr[_idx].registrationStatus != undefined){
+            _str += '<span class="label">Course Status</span> ' + _arr[_idx].registrationStatus + '<br/>';
+        }
         _str += '</div>';
         _str += '</div>';
         _str += '</div>';
        
+        // console.log('These are the students', students);
         $(document).ready(function(){
             $('#r_string' + _idx).hide();
             $('#registrar_action'+_idx).on('change', function ()
@@ -233,7 +237,7 @@ function formatRegistrarCourses(_target, _courses)
         {
           let options = {};
           options.action = $('#registrar_action'+_idx).find(':selected').val();
-          options.courseCode = $('#registrar_course'+_idx).text();
+          options.courseCode = _arr[_idx].courseCode;
           options.participant = registrar_id;
           options.cashier = cashier_id;
           console.log('presending options', options.action, $('#reason'+_idx).val());

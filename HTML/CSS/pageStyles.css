@@ -13,7 +13,8 @@ body {height: 100%}
 	}
 	.button-wide {
 		width: 30%;
-		color: blue;
+		background: #e9edf0;
+		color: #336699;
 		font-size: 1em;
 		text-align: center;
 	}	
@@ -90,9 +91,9 @@ body {height: 100%}
     right: 0;
     top: 50%;
 }
-.student { background-color: #EFCEDC; }
-.registrar { background-color: rgb(230, 238, 230);}
-.cashier { background-color: #8A99D3;}
+.student { background-color: #336699; }
+.registrar { background-color: #646567;}
+.cashier { background-color: #336699;}
 
 .messagePane{
 	height: 3.5em;
@@ -206,9 +207,9 @@ p.message{
 
 
 .showfocus:hover, .acc_header:hover, .acc_body:hover{
-	-webkit-box-shadow: 0px 0px 1em .4em  rgba(81, 203, 238, 1);
-	-moz-box-shadow: 0px 0px 1em .4em  rgba(81, 203, 238, 1);
-	box-shadow: 0px 0px 1em .4em rgba(81, 203, 238, 1);
+	-webkit-box-shadow: 0px 0px 1em .4em  #cc99ff;
+	-moz-box-shadow: 0px 0px 1em .4em  #cc99ff;
+	box-shadow: 0px 0px 1em .4em #cc99ff;
 }
 
 .shape {
@@ -412,6 +413,7 @@ tr.hideRow {display: none;}
 
 .noborder {
 	border:none;
+	color: #f5f3f6;
 }
 
 .regname {
