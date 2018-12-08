@@ -97,7 +97,7 @@ function formatRegistrarCourses(_target, _courses)
     _target.empty();
     let _str = ''; let _date = '';
     let _registrationStatus = {};
-    _str += '<div class="accordion" id="courseAccordion">';
+    _str += '<div class="accordion" id="registrarCourseAccordion">';
     for (let each in _courses)
     {(function(_idx, _arr)
         { console.log(_arr[_idx]); let _action = '<select id=registrar_action'+_idx+'><option value="'+textPrompts.courseProcess.NoAction.select+'">'+textPrompts.courseProcess.NoAction.message+'</option>';
@@ -112,6 +112,7 @@ function formatRegistrarCourses(_target, _courses)
         // associated with the language selected by the web user.
         //
         let r_string = '';
+        let extraInfo = '';
         switch (JSON.parse(_arr[_idx].status).code)
         {
         case courseStatus.Registered.code:
@@ -142,6 +143,11 @@ function formatRegistrarCourses(_target, _courses)
             break;
         case courseStatus.Refunded.code:
             _date = _arr[_idx].refunded;
+            if (_arr[_idx].registrationStatus == 'Registered') {
+                _action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
+            r_string = textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
+            }
+            extraInfo += '<span class="label">Reason for Refund</span><br/>' + _arr[_idx].refundReason + '<br/>';
             break;
         case courseStatus.RegistrationStatusAccepted.code:
             _date = _arr[_idx].registrationStatusAccepted;
@@ -154,6 +160,7 @@ function formatRegistrarCourses(_target, _courses)
             _action += '<option value="'+textPrompts.courseProcess.ForwardRegistrationStatus.select+'">'+textPrompts.courseProcess.ForwardRegistrationStatus.message+'</option>';
             _action += '<option value="'+textPrompts.courseProcess.CancelCourse.select+'">'+textPrompts.courseProcess.CancelCourse.message+'</option>';
             r_string = textPrompts.courseProcess.CancelCourse.prompt+'<input id="reason'+_idx+'" type="text"></input></th>';
+            extraInfo += '<span class="label">Reason for Status Denial</span><br/>' + _arr[_idx].registrationRejectionReason + '<br/>';
             break;
         case courseStatus.RegistrationStatusForwarded.code:
             _date = _arr[_idx].registrationStatusForwarded;
@@ -162,6 +169,7 @@ function formatRegistrarCourses(_target, _courses)
             break;
         case courseStatus.Cancelled.code:
             _date = _arr[_idx].courseCancelled;
+            extraInfo += '<span class="label">Reason for Course Cancellation</span><br/>' + _arr[_idx].cancelReason + '<br/>';
             break;
         default:
             break;
@@ -172,19 +180,19 @@ function formatRegistrarCourses(_target, _courses)
         //if (_idx > 0) {_str += '<div class="spacer"></div>';}
         let amountToBePaid = _arr[_idx].amountDue - _arr[_idx].amountPaid + _arr[_idx].amountRefunded;
         _str += '<div class="card">';
-        _str += '<div class="card-header" id="course' + _idx + '">';
-        _str += '<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' + _idx + '" aria-expanded="false" aria-controls="collapse' + _idx + '">';
+        _str += '<div class="card-header" id="registrarcourse' + _idx + '">';
+        _str += '<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#registrarcollapse' + _idx + '" aria-expanded="false" aria-controls="registrarcollapse' + _idx + '">';
         _str += _arr[_idx].courseCode.substr(0, 6) + ' ' + _arr[_idx].courseTitle + '</button><br/>' + JSON.parse(_arr[_idx].status).text + ' ';
         _str += _date + ' ';
         if (amountToBePaid > 0){
             _str += '<br/>Amount to be Paid: $' + amountToBePaid;
-        } else {
+        } else if (amountToBePaid < 0) {
             _str += '<br/>Amount to be Refunded: $' + amountToBePaid * -1;
         }
         _str += '<br/>' + _action + ' ' + _button;
-        _str += '<div id="r_string' + _idx + '">' + r_string; + '</div>';
+        _str += '<div id="reg_r_string' + _idx + '">' + r_string; + '</div>';
         _str += '</div>';
-        _str += '<div id="collapse' + _idx + '" class="collapse" aria-labelledby="collapse' + _idx + '" data-parent="#courseAccordion">';
+        _str += '<div id="registrarcollapse' + _idx + '" class="collapse" aria-labelledby="registrarcollapse' + _idx + '" data-parent="#registrarCourseAccordion">';
         _str += '<div class="card-body">';
         _str += '<span class="label">Student</span><br/>' + getStudentName(_arr[_idx].student.split('#')[1]) + '<br/>';
         _str += '<span class="label">Course Code</span><br/>' + _arr[_idx].courseCode + '<br/>';
@@ -196,36 +204,10 @@ function formatRegistrarCourses(_target, _courses)
         if(_arr[_idx].registrationStatus != '' & _arr[_idx].registrationStatus != undefined){
             _str += '<span class="label">Course Status</span> ' + _arr[_idx].registrationStatus + '<br/>';
         }
+        _str += extraInfo;
         _str += '</div>';
         _str += '</div>';
         _str += '</div>';
-       
-        // console.log('These are the students', students);
-        $(document).ready(function(){
-            $('#r_string' + _idx).hide();
-            $('#registrar_action'+_idx).on('change', function ()
-                    {
-                    let action;
-                    action = $('#registrar_action'+_idx).find(':selected').val();
-                    
-                    switch (action)
-                    {
-                        case 'NoAction':
-                        case 'AcceptRegistrationStatus':
-                        case 'ForwardRegistrationStatus':
-                        $('#r_string' + _idx).hide();
-                            break;
-                        case 'DenyRegistrationStatus':
-                        case 'CancelCourse':
-                            $('#reason' + _idx).val('');
-                            $('#r_string' + _idx).show();
-                            break;
-                        default:
-                            break;
-
-                    }
-            });
-        });
 
     })(each, _courses);
     }
@@ -251,7 +233,37 @@ function formatRegistrarCourses(_target, _courses)
           $.when($.post('/composer/client/courseAction', options)).done(function (_results)
           { $('#registrar_messages').prepend(formatMessage(_results.result)); });
       });
-        if (notifyMe(registrar_alerts, _arr[_idx].id)) {$('#registrar_status'+_idx).addClass('highlight'); }
+        if (notifyMe(registrar_alerts, _arr[_idx].id)) {$('#registrarcourse'+_idx).addClass('highlight'); }
+
+        $('#registrarcourse' + _idx).on('click', function () {
+            $('#registrarcourse' + _idx).removeClass('highlight');
+        });
+
+        // console.log('These are the students', students);
+        $('#reg_r_string' + _idx).hide();
+        $('#registrar_action'+_idx).on('change', function ()
+                {
+                let action;
+                action = $('#registrar_action'+_idx).find(':selected').val();
+                
+                switch (action)
+                {
+                    case 'NoAction':
+                    case 'AcceptRegistrationStatus':
+                    case 'ForwardRegistrationStatus':
+                        $('#reg_r_string' + _idx).hide();
+                        break;
+                    case 'DenyRegistrationStatus':
+                    case 'CancelCourse':
+                    $('#reason' + _idx).val('');
+                    $('#reg_r_string' + _idx).show();
+                        break;
+                    default:
+                        break;
+
+                }
+        });
+
     })(each, _courses);
     }
     registrar_alerts = new Array();

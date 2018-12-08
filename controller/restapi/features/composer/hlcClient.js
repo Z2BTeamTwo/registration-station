@@ -224,8 +224,8 @@ exports.courseAction = function (req, res, next) {
                     updateCourse.cashier = factory.newRelationship(NS, 'Cashier', course.cashier.$identifier);
                     updateCourse.amountRefunded = parseFloat(req.body.amount);
                     updateCourse.reason = req.body.reason;
-                    //console.log('\n\n\n\n\n\n\n\nCOURSE REFUND PAY ATTENTION\n\n\n');
-                    //console.log('course', course);
+                    console.log('\n\n\n\n\n\n\n\nCOURSE REFUND PAY ATTENTION\n\n\n');
+                    console.log('course', course);
                     break;
                 default :
                     // console.log('default entered for action: '+req.body.action);
@@ -383,6 +383,8 @@ function _monitor(locals, _event)
         break;
     case 'RegistrationStatusAccepted':
     case 'RegistrationStatusDenied':
+        event.ID = _event.registrarID;
+        svc.send(locals, 'Alert',JSON.stringify(event));
         break;
     case 'RegistrationStatusForwarded':
         event.ID = _event.cashierID;
@@ -397,6 +399,8 @@ function _monitor(locals, _event)
         svc.send(locals, 'Alert',JSON.stringify(event));
         break;
     case 'CourseCancelled':
+        event.ID = _event.cashierID;
+        svc.send(locals, 'Alert',JSON.stringify(event));
         break;
     default:
         break;

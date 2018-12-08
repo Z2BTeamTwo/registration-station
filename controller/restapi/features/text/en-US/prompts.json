@@ -169,7 +169,7 @@
       "amountDue": "Amount Due",
       "description": "Course Title",
       "amountPaid": "Amount Paid",
-      "amountRefunded": "Amount Refunded",
+      "amountRefunded": "Amount Refunded:",
       "processing_msg": "Processing {0} request for course code: {1}",
       "student_no_course_msg": "No courses for this student: ",
       "registrar_cashier_no_course_msg": "No courses have been submitted for your review.",

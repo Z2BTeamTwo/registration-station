@@ -245,12 +245,13 @@ function formatCourses(_target, _courses)
 {
     _target.empty();
     let _str = ''; let _date = '';
-    _str += '<div class="accordion" id="courseAccordion">';
+    _str += '<div class="accordion" id="studentCourseAccordion">';
     for (let each in _courses)
     {(function(_idx, _arr)
       {let _action = '<select id=student_action'+_idx+'><option value="'+textPrompts.courseProcess.NoAction.select+'">'+textPrompts.courseProcess.NoAction.message+'</option>';
         let r_string;
         r_string = '';
+        let extraInfo = '';
         //
         // each order can have different states and the action that a buyer can take is directly dependent on the state of the order.
         // this switch/case table displays selected order information based on its current status and displays selected actions, which
@@ -260,7 +261,7 @@ function formatCourses(_target, _courses)
         // These are the text strings which will be displayed in the browser and are retrieved from the prompts.json file
         // associated with the language selected by the web user.
         //
-        console.log(_arr[_idx]);
+        // console.log(_arr[_idx]);
         switch (JSON.parse(_arr[_idx].status).code)
         {
         case courseStatus.Created.code:
@@ -290,10 +291,11 @@ function formatCourses(_target, _courses)
             }
             break;
         case courseStatus.Refunded.code:
-            _date = _arr[_idx].refunded + "<br/>" + _arr[_idx].refundReason;
+            _date = _arr[_idx].refunded;
             if(_arr[_idx].registrationStatus != 'Cancelled'){
                 _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.courseProcess.Register.message+'</option>';
             }
+            extraInfo += '<span class="label">Reason for Refund</span><br/>' + _arr[_idx].refundReason + '<br/>';
             break;
         case courseStatus.RegistrationStatusAccepted.code:
             _date = _arr[_idx].registrationStatusAccepted;
@@ -308,9 +310,10 @@ function formatCourses(_target, _courses)
             _date = _arr[_idx].registrationStatusDenied;
             if (_arr[_idx].registrationStatus == 'Registered'){
                 _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
-            } else if (_arr[_idx].registrationStatus == 'Dropped') {
+            } else if (_arr[_idx].registrationStatus == 'Dropped' || _arr[_idx].registrationStatus == '') {
                 _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.courseProcess.Register.message+'</option>';
             }
+            extraInfo += '<span class="label">Reason for Status Denial</span><br/>' + _arr[_idx].registrationRejectionReason + '<br/>';
             break;
         case courseStatus.RegistrationStatusForwarded.code:
             _date = _arr[_idx].registrationStatusForwarded;
@@ -318,6 +321,7 @@ function formatCourses(_target, _courses)
             break;
         case courseStatus.Cancelled.code:
             _date = _arr[_idx].courseCancelled;
+            extraInfo += '<span class="label">Reason for Course Cancellation</span><br/>' + _arr[_idx].cancelReason + '<br/>';
             break;
         default:
             break;
@@ -328,8 +332,8 @@ function formatCourses(_target, _courses)
         //if (_idx > 0) {_str += '<div class="spacer"></div>';}
         let amountToBePaid = _arr[_idx].amountDue - _arr[_idx].amountPaid + _arr[_idx].amountRefunded;
         _str += '<div class="card">';
-        _str += '<div class="card-header" id="course' + _idx + '">';
-        _str += '<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse' + _idx + '" aria-expanded="false" aria-controls="collapse' + _idx + '">';
+        _str += '<div class="card-header" id="studentcourse' + _idx + '">';
+        _str += '<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#studentcollapse' + _idx + '" aria-expanded="false" aria-controls="studentcollapse' + _idx + '">';
         _str += _arr[_idx].courseCode.substr(0, 6) + ' ' + _arr[_idx].courseTitle + '</button><br/>' + JSON.parse(_arr[_idx].status).text + ' ';
         _str += _date + ' ';
         if (amountToBePaid > 0){
@@ -338,9 +342,9 @@ function formatCourses(_target, _courses)
             _str += '<br/>Amount to be Refunded: $' + amountToBePaid * -1;
         }
         _str += '<br/>' + _action + ' ' + _button;
-        _str += '<div id="r_string' + _idx + '">' + r_string; + '</div>';
+        _str += '<div id="student_r_string' + _idx + '">' + r_string; + '</div>';
         _str += '</div>';
-        _str += '<div id="collapse' + _idx + '" class="collapse" aria-labelledby="collapse' + _idx + '" data-parent="#courseAccordion">';
+        _str += '<div id="studentcollapse' + _idx + '" class="collapse" aria-labelledby="studentcollapse' + _idx + '" data-parent="#studentCourseAccordion">';
         _str += '<div class="card-body">';
         _str += '<span class="label">Course Code</span><br/>' + _arr[_idx].courseCode + '<br/>';
         _str += '<span class="label">Schedule</span><br/>' + _arr[_idx].schedule + '<br/>';
@@ -348,37 +352,14 @@ function formatCourses(_target, _courses)
         _str += '<span class="label">Amount Paid</span> $' + _arr[_idx].amountPaid + '<br/>';
         _str += '<span class="label">Amount Due</span> $' + _arr[_idx].amountDue + '<br/>';
         _str += '<span class="label">Amount Refunded</span> $' + _arr[_idx].amountRefunded + '<br/>';
+        if(_arr[_idx].registrationStatus != '' & _arr[_idx].registrationStatus != undefined){
+            _str += '<span class="label">Course Status</span> ' + _arr[_idx].registrationStatus + '<br/>';
+        }
+        _str += extraInfo;
         _str += '</div>';
         _str += '</div>';
         _str += '</div>';
 
-        
-
-
-        $(document).ready(function(){
-                $('#r_string' + _idx).hide();
-                $('#student_action'+_idx).on('change', function ()
-                {
-                let action;
-                action = $('#student_action'+_idx).find(':selected').val();
-                
-                switch (action)
-                {
-                    case 'NoAction':
-                    case 'Register':
-                    case 'Drop':
-                        $('#r_string' + _idx).hide();
-                        break;
-                    case 'PayTuition':
-                        $('#student_amount' + _idx).val('');
-                        $('#r_string' + _idx).show();
-                        break;
-                    default:
-                        break;
-
-                }
-            });
-        });
 
     })(each, _courses);
     }
@@ -408,7 +389,34 @@ function formatCourses(_target, _courses)
             });
             // use the notifyMe function to determine if this order is in the alert array. 
             // if it is, the highlight the $('#b_status'+_idx) html element by adding the 'highlight' class
-            if (notifyMe(student_alerts, _arr[_idx].id)) {$('#course'+_idx).addClass('highlight'); }
+            if (notifyMe(student_alerts, _arr[_idx].id)) {$('#studentcourse'+_idx).addClass('highlight'); }
+
+            $('#studentcourse' + _idx).on('click', function () {
+                $('#studentcourse' + _idx).removeClass('highlight');
+            });
+
+            $('#student_r_string' + _idx).hide();
+            $('#student_action'+_idx).on('change', function ()
+            {
+            let action;
+            action = $('#student_action'+_idx).find(':selected').val();
+            
+            switch (action)
+            {
+                case 'NoAction':
+                case 'Register':
+                case 'Drop':
+                    $('#student_r_string' + _idx).hide();
+                    break;
+                case 'PayTuition':
+                    $('#student_amount' + _idx).val('');
+                    $('#student_r_string' + _idx).show();
+                    break;
+                default:
+                    break;
+
+            }
+        });
         })(each, _courses);
     }
     // reset the b_alerts array to a new array

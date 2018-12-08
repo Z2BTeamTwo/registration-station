@@ -58,7 +58,7 @@ function CreateCourse(register) {
  * @transaction
  */
 function RegisterCourse(register) {
-    if (register.course.status == JSON.stringify(courseStatus.Created) || JSON.parse(register.course.status).code == courseStatus.Dropped.code || (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusAccepted.code & register.course.registrationStatus == 'Dropped'))
+    if (register.course.status == JSON.stringify(courseStatus.Created) || JSON.parse(register.course.status).code == courseStatus.Dropped.code || (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusAccepted.code & register.course.registrationStatus == 'Dropped') || JSON.parse(register.course.status).code == courseStatus.RegistrationStatusDenied.code)
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
@@ -138,17 +138,15 @@ function PayTuition(register) {
         register.course.tuitionPaid = new Date().toISOString();
         var _status = courseStatus.TuitionPaid;
         register.course.status = JSON.stringify(_status);
+        console.log(register.course);
         return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
             .then(function (assetRegistry) {
                 return assetRegistry.update(register.course)
-                .then(function (assetRegistry) {
-                    return assetRegistry.update(register.course)
-                    .then (function (_res) 
-                    {
-                        z2bEmit('TuitionPaid', register.course);
-                        return (_res);
-                    }).catch(function(error){return(error);});
-                });
+                .then (function (_res) 
+                {
+                    z2bEmit('TuitionPaid', register.course);
+                    return (_res);
+                }).catch(function(error){return(error);});
             });
         }
 }
@@ -158,7 +156,7 @@ function PayTuition(register) {
  * @transaction
  */
 function RefundTuition(register) {
-    if (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusForwarded.code || (JSON.parse(register.course.status).code == courseStatus.TuitionPaid.code & register.course.amountDue < 0) || register.course.status == JSON.stringify(courseStatus.Cancelled))
+    if (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusForwarded.code || (JSON.parse(register.course.status).code == courseStatus.TuitionPaid.code & register.course.amountDue - register.course.amountPaid + register.course.amountRefunded < 0) || register.course.status == JSON.stringify(courseStatus.Cancelled))
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
