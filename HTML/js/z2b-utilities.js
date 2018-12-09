@@ -332,3 +332,7 @@ function accToggle(_parent, _body, _header)
         $(parent).removeClass('off'); $(parent).addClass('on');
     }
 }
+
+function formatDate(dateString){
+    
+}

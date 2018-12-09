@@ -28,7 +28,7 @@ let totalAmount = 0;
 /**
  * load the Student User Experience
  */
-function loadStudentUX ()
+function loadStudentUX (unifiedView)
 {
     // get the html page to load
     let toLoad = 'student.html';
@@ -38,23 +38,29 @@ function loadStudentUX ()
     if ((typeof(students) === 'undefined') || (students === null) || (students.length === 0))
     { $.when($.get(toLoad), deferredMemberLoad()).done(function (page, res)
         {
-            setupStudent(page);
+            setupStudent(page, unifiedView);
         });
     }
     else
     {
         $.when($.get(toLoad)).done(function (page)
         {
-            setupStudent(page);
+            setupStudent(page, unifiedView);
         });
     }
 }
     
-    function setupStudent(page)
+    function setupStudent(page, unifiedView)
     {
-    // empty the hetml element that will hold this page
-    $('#body').empty();
-    $('#body').append(page);
+    // empty the html element that will hold this page
+    if (unifiedView){
+        $('#studentbody').empty();
+        $('#studentbody').append(page);
+    }
+    else {
+        $('#body').empty();
+        $('#body').append(page);
+    }
     // empty the buyer alerts array
     student_alerts = [];
     // if there are no alerts, then remove the 'on' class and add the 'off' class
@@ -110,7 +116,6 @@ function clearCourseTable() {
 
 function populateCourseTable(){
     let selectedVal = $('#course').find(':selected').val();
-    console.log(selectedVal == 'blank');
     if (selectedVal == 'blank'){
         $('#submitNewCourse').hide();
         $('#cancelNewCourse').hide();
@@ -136,6 +141,23 @@ function populateCourseTable(){
 /**
  * Displays the create course form for the selected student
  */
+
+function getStudentName(studentId){
+    // console.log('in getstudentname looking for', studentId);
+    let studentName = 'Not found';
+    for(let student in students){
+        (function (_idx, _arr){
+            // console.log('In for loop', _arr[_idx]);
+        if (_arr[_idx].id == studentId){
+            // console.log('Found!');
+            studentName = _arr[_idx].participantName;
+        }
+    })(student, students);
+    }
+
+    return studentName;
+}
+
 function displayCourseForm()
 {  let toLoad = 'createCourse.html';
     totalAmount = 0;
@@ -223,11 +245,13 @@ function formatCourses(_target, _courses)
 {
     _target.empty();
     let _str = ''; let _date = '';
+    _str += '<div class="accordion" id="studentCourseAccordion">';
     for (let each in _courses)
     {(function(_idx, _arr)
-      {let _action = '<th><select id=student_action'+_idx+'><option value="'+textPrompts.courseProcess.NoAction.select+'">'+textPrompts.courseProcess.NoAction.message+'</option>';
+      {let _action = '<select id=student_action'+_idx+'><option value="'+textPrompts.courseProcess.NoAction.select+'">'+textPrompts.courseProcess.NoAction.message+'</option>';
         let r_string;
-        r_string = '</th>';
+        r_string = '';
+        let extraInfo = '';
         //
         // each order can have different states and the action that a buyer can take is directly dependent on the state of the order.
         // this switch/case table displays selected order information based on its current status and displays selected actions, which
@@ -237,6 +261,7 @@ function formatCourses(_target, _courses)
         // These are the text strings which will be displayed in the browser and are retrieved from the prompts.json file
         // associated with the language selected by the web user.
         //
+        // console.log(_arr[_idx]);
         switch (JSON.parse(_arr[_idx].status).code)
         {
         case courseStatus.Created.code:
@@ -255,21 +280,22 @@ function formatCourses(_target, _courses)
             _date = _arr[_idx].tuitionRequested;
             _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
             _action += '<option value="'+textPrompts.courseProcess.PayTuition.select+'">'+textPrompts.courseProcess.PayTuition.message+'</option>';
-            r_string = '<br/>'+textPrompts.courseProcess.PayTuition.prompt+'<input id="student_amount'+_idx+'" type="text"></input></th>';
+            r_string = textPrompts.courseProcess.PayTuition.prompt+'<input id="student_amount'+_idx+'" type="text"></input></th>';
             break;
         case courseStatus.TuitionPaid.code:
             _date = _arr[_idx].tuitionPaid;
             _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
             if (_arr[_idx].amountDue > 0){
                 _action += '<option value="'+textPrompts.courseProcess.PayTuition.select+'">'+textPrompts.courseProcess.PayTuition.message+'</option>';
-                r_string = '<br/>'+textPrompts.courseProcess.PayTuition.prompt+'<input id="student_amount'+_idx+'" type="text"></input></th>';
+                r_string = textPrompts.courseProcess.PayTuition.prompt+'<input id="student_amount'+_idx+'" type="text"></input></th>';
             }
             break;
         case courseStatus.Refunded.code:
-            _date = _arr[_idx].refunded + '<br/>'+_arr[_idx].backorder;
+            _date = _arr[_idx].refunded;
             if(_arr[_idx].registrationStatus != 'Cancelled'){
-                _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.orderProcess.Register.message+'</option>';
+                _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.courseProcess.Register.message+'</option>';
             }
+            extraInfo += '<span class="label">Reason for Refund</span><br/>' + _arr[_idx].refundReason + '<br/>';
             break;
         case courseStatus.RegistrationStatusAccepted.code:
             _date = _arr[_idx].registrationStatusAccepted;
@@ -284,9 +310,10 @@ function formatCourses(_target, _courses)
             _date = _arr[_idx].registrationStatusDenied;
             if (_arr[_idx].registrationStatus == 'Registered'){
                 _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
-            } else if (_arr[_idx].registrationStatus == 'Dropped') {
+            } else if (_arr[_idx].registrationStatus == 'Dropped' || _arr[_idx].registrationStatus == '') {
                 _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.courseProcess.Register.message+'</option>';
             }
+            extraInfo += '<span class="label">Reason for Status Denial</span><br/>' + _arr[_idx].registrationRejectionReason + '<br/>';
             break;
         case courseStatus.RegistrationStatusForwarded.code:
             _date = _arr[_idx].registrationStatusForwarded;
@@ -294,22 +321,49 @@ function formatCourses(_target, _courses)
             break;
         case courseStatus.Cancelled.code:
             _date = _arr[_idx].courseCancelled;
+            extraInfo += '<span class="label">Reason for Course Cancellation</span><br/>' + _arr[_idx].cancelReason + '<br/>';
             break;
         default:
             break;
         }
         
-        let _button = '<th><button id="student_btn_'+_idx+'">'+textPrompts.courseProcess.ex_button+'</button></th>';
+        let _button = '<button id="student_btn_'+_idx+'">'+textPrompts.courseProcess.ex_button+'</button>';
         _action += '</select>';
-        if (_idx > 0) {_str += '<div class="spacer"></div>';}
-        _str += '<table class="wide"><tr><th>'+textPrompts.courseProcess.courseCode+'</th><th>'+textPrompts.courseProcess.status+'</th><th class="right">'+textPrompts.courseProcess.amountDue+'</th></tr>';
-        _str += '<tr><th id ="student_order'+_idx+'" width="20%">'+_arr[_idx].id+'</th><th width="50%" id="b_status'+_idx+'">'+JSON.parse(_arr[_idx].status).text+': '+_date+'</th><th class="right">$'+_arr[_idx].amountDue+'.00</th>'+_action+r_string+_button+'</tr></table>';
-        _str += '</table>';
+        //if (_idx > 0) {_str += '<div class="spacer"></div>';}
+        let amountToBePaid = _arr[_idx].amountDue - _arr[_idx].amountPaid + _arr[_idx].amountRefunded;
+        _str += '<div class="card">';
+        _str += '<div class="card-header" id="studentcourse' + _idx + '">';
+        _str += '<button class="btn btn-link" type="button" data-toggle="collapse" data-target="#studentcollapse' + _idx + '" aria-expanded="false" aria-controls="studentcollapse' + _idx + '">';
+        _str += _arr[_idx].courseCode.substr(0, 6) + ' ' + _arr[_idx].courseTitle + '</button><br/>' + JSON.parse(_arr[_idx].status).text + ' ';
+        _str += _date + ' ';
+        if (amountToBePaid > 0){
+            _str += '<br/>Amount to be Paid: $' + amountToBePaid;
+        } else if (amountToBePaid < 0) {
+            _str += '<br/>Amount to be Refunded: $' + amountToBePaid * -1;
+        }
+        _str += '<br/>' + _action + ' ' + _button;
+        _str += '<div id="student_r_string' + _idx + '">' + r_string; + '</div>';
+        _str += '</div>';
+        _str += '<div id="studentcollapse' + _idx + '" class="collapse" aria-labelledby="studentcollapse' + _idx + '" data-parent="#studentCourseAccordion">';
+        _str += '<div class="card-body">';
+        _str += '<span class="label">Course Code</span><br/>' + _arr[_idx].courseCode + '<br/>';
+        _str += '<span class="label">Schedule</span><br/>' + _arr[_idx].schedule + '<br/>';
+        _str += '<span class="label">Credit Hours</span> ' + _arr[_idx].creditHours + '<br/>';
+        _str += '<span class="label">Amount Paid</span> $' + _arr[_idx].amountPaid + '<br/>';
+        _str += '<span class="label">Amount Due</span> $' + _arr[_idx].amountDue + '<br/>';
+        _str += '<span class="label">Amount Refunded</span> $' + _arr[_idx].amountRefunded + '<br/>';
+        if(_arr[_idx].registrationStatus != '' & _arr[_idx].registrationStatus != undefined){
+            _str += '<span class="label">Course Status</span> ' + _arr[_idx].registrationStatus + '<br/>';
+        }
+        _str += extraInfo;
+        _str += '</div>';
+        _str += '</div>';
+        _str += '</div>';
 
-        // TODO do an on change to hide and show the prompt when you change the selection on the action to take
 
     })(each, _courses);
     }
+    _str += '</div>';
     // append the newly built order table to the web page
     _target.append(_str);
     //
@@ -322,17 +376,47 @@ function formatCourses(_target, _courses)
                 {
                 let options = {};
                 options.action = $('#student_action'+_idx).find(':selected').val();
-                options.courseCode = $('#student_order'+_idx).text();
+                options.courseCode = _arr[_idx].courseCode;
                 options.participant = $('#student').val();
                 if ((options.action === 'PayTuition'))
-                {options.amount = $('#student_amount'+_idx).val();}
+                {
+                    options.amount = $('#student_amount'+_idx).val();
+                }
+                console.log(options);
                 $('#student_messages').prepend(formatMessage(options.action+textPrompts.courseProcess.processing_msg.format(options.action, options.courseCode)+options.courseCode));
                 $.when($.post('/composer/client/courseAction', options)).done(function (_results)
                 { $('#student_messages').prepend(formatMessage(_results.result)); });
             });
             // use the notifyMe function to determine if this order is in the alert array. 
             // if it is, the highlight the $('#b_status'+_idx) html element by adding the 'highlight' class
-            if (notifyMe(student_alerts, _arr[_idx].id)) {$('#student_status'+_idx).addClass('highlight'); }
+            if (notifyMe(student_alerts, _arr[_idx].id)) {$('#studentcourse'+_idx).addClass('highlight'); }
+
+            $('#studentcourse' + _idx).on('click', function () {
+                $('#studentcourse' + _idx).removeClass('highlight');
+            });
+
+            $('#student_r_string' + _idx).hide();
+            $('#student_action'+_idx).on('change', function ()
+            {
+            let action;
+            action = $('#student_action'+_idx).find(':selected').val();
+            
+            switch (action)
+            {
+                case 'NoAction':
+                case 'Register':
+                case 'Drop':
+                    $('#student_r_string' + _idx).hide();
+                    break;
+                case 'PayTuition':
+                    $('#student_amount' + _idx).val('');
+                    $('#student_r_string' + _idx).show();
+                    break;
+                default:
+                    break;
+
+            }
+        });
         })(each, _courses);
     }
     // reset the b_alerts array to a new array

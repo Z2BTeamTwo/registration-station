@@ -15,7 +15,7 @@
       "idx_preload": "Preload Network"
     },
     "admin": {
-      "title": "Registration - Admin",
+      "title": "Registration Station - Admin",
       "npm": "Network Profile Management",
       "npm_API": "API",
       "npm_param": "Parameters",
@@ -69,8 +69,8 @@
     },
     "student": {
       "title": "Registration Station - Student",
-      "newCourse": "Create New Course",
-      "courseStatus": "Display Course Status"
+      "newCourse": "Add Course",
+      "courseStatus": "Display Courses"
     },
     "createConnectionProfile": {
       "title": "type the name of the new profile here: ",
@@ -102,13 +102,13 @@
     },
     "createCourse": {
       "title": "Create New Course",
-      "cn_on": "Course Code",
-      "cn_status": "Status",
-      "cn_date": "Date",
-      "cn_title": "Course Title",
-      "cn_sched": "Course Schedule",
-      "cn_hours": "Credit Hours",
-      "cn_total": "Total",
+      "cn_on": "Course Code:",
+      "cn_status": "Status:",
+      "cn_date": "Date:",
+      "cn_title": "Course Title:",
+      "cn_sched": "Course Schedule:",
+      "cn_hours": "Credit Hours:",
+      "cn_total": "Total:",
       "cancelNewCourse": "Cancel",
       "submitNewCourse": "Submit"
     },
@@ -127,11 +127,6 @@
       "cancel": "Cancel",
       "submit": "Submit"
     },
-    "provider": {
-      "title": "Provider Chapter 5, Select Provider to see their view: ",
-      "provider_clear": "Clear Window",
-      "providerOrderStatus": "Display Order Status"
-    },
     "removeMember": {
       "rm_type": "Type",
       "rm_members": "Members",
@@ -143,14 +138,17 @@
       "submit": "Submit"
     },
     "registrar": {
-      "title": "Registrar View",
+      "title": "Registration Station - Registrar",
       "registrar_clear": "Clear Window",
-      "registrarCourseStatus": "Display Order Status"
+      "registrarCourseStatus": "Display Courses"
     },
     "cashier": {
-      "title": "Shipper Chapter 5, Select Shipper to see their view: ",
-      "shipper_clear": "Clear Window",
-      "shipperOrderStatus": "Display Order Status    "
+      "title": "Registration Station - Cashier",
+      "cashier_clear": "Clear Window",
+      "cashierCourseStatus": "Display Courses"
+    },
+    "unified": {
+      "title": "Registration Station - Unified View"
     },
     "singleUX": {},
     "courseProcess": {
@@ -162,7 +160,7 @@
       "CancelCourse": {"select": "CancelCourse", "message": "Cancel Course", "prompt": "Reason: "},
       "RequestTuition": {"select": "RequestTuition", "message": "Request Tuition"},
       "PayTuition": {"select": "PayTuition", "message": "Pay", "prompt": "Amount to Pay: "},
-      "RefundTuition": {"select": "RefundTuition", "message": "Refund", "prompt": "Amount to Refund:"},
+      "RefundTuition": {"select": "RefundTuition", "message": "Refund", "prompt": "Reason for Refund:"},
       "NoAction": {"select": "NoAction", "message": "Take No Action"},
       "ex_button": "Execute",
       "ca_button": "Cancel",
@@ -171,7 +169,7 @@
       "amountDue": "Amount Due",
       "description": "Course Title",
       "amountPaid": "Amount Paid",
-      "amountRefunded": "Amount Refunded",
+      "amountRefunded": "Amount Refunded:",
       "processing_msg": "Processing {0} request for course code: {1}",
       "student_no_course_msg": "No courses for this student: ",
       "registrar_cashier_no_course_msg": "No courses have been submitted for your review.",

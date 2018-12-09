@@ -1,2 +1,4 @@
 node_modules
 composer-logs
+*.bna
+/network/dist/networkadmin.card

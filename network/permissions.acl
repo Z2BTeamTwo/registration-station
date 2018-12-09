@@ -67,7 +67,7 @@ rule netAccessStudent{
 *
 **/
 rule RegistrarACL {
-    description: "Allow registrar full access to order where they are listed as registrar"
+    description: "Allow registrar full access to course where they are listed as registrar"
     participant(m): "org.acme.Z2BTestNetwork.Registrar"
     operation: READ, UPDATE
     resource(v): "org.acme.Z2BTestNetwork.Course"
@@ -132,5 +132,31 @@ rule CashierACL {
     resource(v): "org.acme.Z2BTestNetwork.Course"
     condition: (v.cashier.cashierID == m.getIdentifier())
     action: ALLOW
+}
+
+rule CashierRequestTuition {
+    description: "Enable a Cashier to request tuition for a registered course"
+    participant(m): "org.acme.Z2BTestNetwork.Cashier"
+    operation: READ, CREATE, UPDATE
+    resource(v): "org.acme.Z2BTestNetwork.**"
+    transaction(tx): "org.acme.Z2BTestNetwork.RequestTuition"
+    condition: (v.cashier.cashierID == m.getIdentifier())
+    action: ALLOW
+}
+rule CashierRefundTuition {
+    description: "Enable a Cashier to refund tuition for a registered course"
+    participant(m): "org.acme.Z2BTestNetwork.Cashier"
+    operation: READ, CREATE, UPDATE
+    resource(v): "org.acme.Z2BTestNetwork.**"
+    transaction(tx): "org.acme.Z2BTestNetwork.RefundTuition"
+    condition: (v.cashier.cashierID == m.getIdentifier())
+    action: ALLOW
+}
+rule netAccessCashier {
+  description: "Allow Cashiers access to the network"
+  participant: "org.acme.Z2BTestNetwork.Cashier"
+  operation: READ, CREATE, UPDATE, DELETE
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
 }
 

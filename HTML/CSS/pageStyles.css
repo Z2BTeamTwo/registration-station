@@ -13,7 +13,8 @@ body {height: 100%}
 	}
 	.button-wide {
 		width: 30%;
-		color: blue;
+		background: #e9edf0;
+		color: #336699;
 		font-size: 1em;
 		text-align: center;
 	}	
@@ -46,7 +47,39 @@ body {height: 100%}
 		margin-right: .125em;
 		overflow: auto;
 	}
-}	
+}
+
+.highlight {
+	border: .125em solid rgb(88, 8, 235);
+	-webkit-border-radius: .5em;
+	  -moz-border-radius: .5em;
+	  border-radius: .5em;
+	  background-color: rgb(252, 245, 151);
+	  font-weight: bold;  
+}
+.notify.on {
+	border-radius: 100%;
+	height: 2em;
+	width: 2em;
+	background-color: rgba(226, 32, 91, 0.77);
+	color: #ffffff;
+	text-align: top;
+	position: relative;
+	top: .4em;
+	float: right;
+	right: .5em;
+	visibility: visible;
+  }
+  .notify.off {
+	visibility: hidden;
+  }
+  .n_count.on { font-size: .5em; font-weight: bold; visibility: visible;}
+  .n_count.off { font-size: .5em; font-weight: bold; visibility: hidden;}
+  h2 {font-size: 1.5em; margin-top: .25em; margin-bottom: .25em;}
+  .strike {
+    position: relative;
+}
+
 .strike {
     position: relative;
 }
@@ -58,18 +91,20 @@ body {height: 100%}
     right: 0;
     top: 50%;
 }
-.student { background-color: #EFCEDC; }
-.registrar { background-color: rgb(230, 238, 230);}
-.cashier { background-color: #8A99D3;}
+.student { background-color: #336699; }
+.registrar { background-color: #646567;}
+.cashier { background-color: #336699;}
+
 .messagePane{
 	height: 3.5em;
 	margin-left: 0px;
-	width: 100%;
-	overflow: auto;
+	width: 425px;
+	overflow-x: scroll;
+	overflow-y: scroll;
 }
 p.message{
 	color: #824301;
-	font-size: 1.125em;
+	font-size: 1em;
 	margin: .125em;
 	padding: 0px;
 	text-align: left;
@@ -96,26 +131,29 @@ p.message{
 .blockchain {
 	background-color: black;
 	position: fixed;
-	height: 8%;
-	margin-left: 1%;
-	width: 95%;
-	top: 92%;
+	height: 10%;
+	margin-left: 0%;
+	width: 100%;
+	top: 90%;
 	padding: 4px;
 	overflow-x: auto;
     overflow-y: hidden;
-    white-space: nowrap;}
+	white-space: nowrap;
+}
+
 .block {
 	background-color: blue;
 	color: white;
 	display: inline-block;
 	padding: 2px;
 	margin: 5px;
-	height: 90%;
+	height: 70%;
     vertical-align: middle;
 	text-overflow: 	wrap;
 	width: 290px;
 	word-wrap: break-word;
 	white-space: normal;
+	font-size: 8px;
 }
 .bottom-hold{
 	position: fixed;
@@ -124,10 +162,7 @@ p.message{
 	width: 90%;
 	top: 85%;
 }
-.container{
-	width: 100%;
-}
-table {border: 1px solid #0000ff;}
+
  th {text-align: center; font-style: bold; font-size: 1em; padding: .25em;}
  td { border: 1px solid #0000ff; padding-left: .25em; padding-right: .25em}
  th.right {text-align: right; font-style: bold; font-size: 1em; padding: .25em;}
@@ -172,9 +207,9 @@ table {border: 1px solid #0000ff;}
 
 
 .showfocus:hover, .acc_header:hover, .acc_body:hover{
-	-webkit-box-shadow: 0px 0px 1em .4em  rgba(81, 203, 238, 1);
-	-moz-box-shadow: 0px 0px 1em .4em  rgba(81, 203, 238, 1);
-	box-shadow: 0px 0px 1em .4em rgba(81, 203, 238, 1);
+	-webkit-box-shadow: 0px 0px 1em .4em  #cc99ff;
+	-moz-box-shadow: 0px 0px 1em .4em  #cc99ff;
+	box-shadow: 0px 0px 1em .4em #cc99ff;
 }
 
 .shape {
@@ -301,7 +336,7 @@ table {border: 1px solid #0000ff;}
 .mic_disabled {
 	opacity: 0.6
 }
-.tutorial {background: #D0D0D0; color: #404040; height: 100%}
+.tutorial {background: #f7f8f9; color: #404040; height: 100%}
 
 .navbar {
   margin-bottom: 0px;
@@ -364,11 +399,29 @@ tr.hideRow {display: none;}
 	float: right;
 }
 
+
 .user_dialog {
 	color: black;
 	font-size: 12px;
 	text-align: left;
 	width: 60%
+}
+
+.label {
+	font-weight: bold;
+}
+
+.noborder {
+	border:none;
+	color: #f5f3f6;
+}
+
+.regname {
+	margin-bottom: 12px;
+}
+
+.casname {
+	margin-bottom: 12px;
 }
 .glyphicon-thumbs-up, .ok {background: #00FF00; font-size: 1.5em;}
 .glyphicon-thumbs-down, .fail {background: #FF0000; font-size: 1.5em;}

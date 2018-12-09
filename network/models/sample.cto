@@ -3,7 +3,6 @@
  */
 namespace org.acme.Z2BTestNetwork
 import composer.base.*
-import composer.events.*
 
 participant Student identified by studentID extends Member{
     o String studentID
@@ -57,7 +56,6 @@ asset Course identified by courseCode {
 }
 
   transaction CreateCourse {
-    o Integer amount
     --> Course course
     --> Student student
   }
@@ -123,4 +121,68 @@ asset Course identified by courseCode {
     --> Student student
     --> Registrar registrar
     --> Cashier cashier
+}
+
+abstract event BasicEvent {
+}
+
+abstract event Z2BEvent extends BasicEvent {
+  o String courseCode
+}
+
+
+event Created extends Z2BEvent {
+  o String studentID
+}
+
+// notify registrar that a course has been registered
+event Registered extends Z2BEvent {
+  o String studentID
+  o String registrarID
+}
+
+// notify registrar, and if applicable cashier, that a course has been dropped
+event Dropped extends Z2BEvent {
+  o String studentID
+  o String registrarID
+}
+
+// notify student that tuition has been requested 
+event TuitionRequested extends Z2BEvent {
+  o String studentID
+}
+
+// notify cashier that tuition has been paid
+event TuitionPaid extends Z2BEvent {
+  o String studentID
+  o String cashierID
+}
+
+// notify student that a refund has been initiated
+event Refunded extends Z2BEvent {
+  o String studentID
+}
+
+// notify student that registration status has been accepted
+event RegistrationStatusAccepted extends Z2BEvent {
+  o String studentID
+  o String registrarID
+}
+
+// notify student that registration status has been denied
+event RegistrationStatusDenied extends Z2BEvent {
+  o String studentID
+  o String registrarID
+}
+
+// notify student and cashier that registration has been forwarded to cashier
+event RegistrationStatusForwarded extends Z2BEvent {
+  o String studentID
+  o String cashierID
+}
+
+// notify student and if applicable cashier that course has been cancelled
+event CourseCancelled extends Z2BEvent {
+  o String studentID
+  o String cashierID
 }

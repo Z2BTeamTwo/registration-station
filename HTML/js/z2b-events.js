@@ -21,18 +21,17 @@ let wsSocket;
 /**
  * load the four initial user roles into a single page.
  */
-function singleUX ()
+function loadSingleUX ()
 {
     let toLoad = 'singleUX.html';
-    if ((typeof(buyers) === 'undefined') || (buyers === null) || (buyers.length === 0))
+    if ((typeof(students) === 'undefined') || (students === null) || (students.length === 0))
     { $.when($.get(toLoad), deferredMemberLoad()).done(function (_page, _res)
         {
         $('#body').empty();
         $('#body').append(_page);
-        loadBuyerUX();
-        loadSellerUX();
-        loadProviderUX();
-        loadShipperUX();
+        loadStudentUX(true);
+        loadRegistrarUX(true);
+        loadCashierUX(true);
         // Initialize Registration for all Z2B Business Events
         goEventInitialize();
     });
@@ -42,14 +41,16 @@ function singleUX ()
         {
             $('#body').empty();
             $('#body').append(_page);
-            loadBuyerUX();
-            loadSellerUX();
-            loadProviderUX();
-            loadShipperUX();
+            loadStudentUX(true);
+            loadRegistrarUX(true);
+            loadCashierUX(true);
+            //loadAdvisorUX();
             // Initialize Registration for all Z2B Business Events
             goEventInitialize();
         });
     }
+
+    updatePage('unified');
 }
 /**
  * load all of the members in the network for use in the different user experiences. This is a synchronous routine and is executed autormatically on web app start. 
@@ -72,6 +73,7 @@ function memberLoad ()
         students_string = _getMembers(students);
         registrars_string = _getMembers(registrars);
         cashiers_string = _getMembers(cashiers);
+        console.log('Students array', students);
 
         });
 }
@@ -101,8 +103,6 @@ function deferredMemberLoad()
     $.when($.post('/composer/admin/getMembers', options), $.post('/composer/admin/getMembers', options2),
         $.post('/composer/admin/getMembers', options3)).done(function (_students, _cashiers, _registrars)
         {
-            students = dropDummy(_students[0].members);
-            registrars = dropDummy(_registrars[0].members);
             cashiers = dropDummy(_cashiers[0].members);
             students_string = _getMembers(students);
             registrars_string = _getMembers(registrars);
@@ -119,8 +119,9 @@ function deferredMemberLoad()
 function _getMembers(_members)
 {
     let _str = '';
+    console.log('get members array', _members);
     for (let each in _members)
-    {(function(_idx, _arr){_str +='<option value="'+_arr[_idx].id+'">' +_arr[_idx].companyName+'</option>';})(each, _members);}
+    {(function(_idx, _arr){_str +='<option value="'+_arr[_idx].id+'">' +_arr[_idx].participantName+'</option>';})(each, _members);}
     _str += '</select>';
     return _str;
 }
@@ -135,12 +136,12 @@ function goEventInitialize()
 /**
  * @param {Event} _event - inbound Event
  * @param {String} _id - subscriber target
- * @param {String} _orderID - inbound order id
+ * @param {String} _courseCode - inbound order id
  */
-function addNotification(_event, _id, _orderID)
+function addNotification(_event, _id, _courseCode)
 {
     let method = 'addNotification';
-    console.log(method+' _event'+_event+' id: '+_id+' orderID: '+_orderID);
+    console.log(method+' _event'+_event+' id: '+_id+' courseCode: '+_courseCode);
     let type = getSubscriber(_id);
     if (type === 'none') {return;}
     switch(type)
@@ -170,6 +171,9 @@ function addNotification(_event, _id, _orderID)
  */
 function toggleAlert(_target, _array, _count)
 {
+    console.log(_target);
+    console.log(_array);
+    console.log(_count);
     if (_array.length < 1)
     {$(_target).removeClass('on'); $(_target).addClass('off'); }
     else {$(_count).empty(); $(_count).append(_array.length);
@@ -194,6 +198,7 @@ function getSubscriber(_id)
  */
 function z2bSubscribe(_type, _id)
 {
+    console.log('z2b-events.js - in z2bSubscribe for id ', _id, 'type:', _type);
     subscribers.push({'type': _type, 'id': _id});
 }
 /**
@@ -216,7 +221,7 @@ function z2bUnSubscribe(_id)
 function notifyMe (_alerts, _id)
 {
     let b_h = false;
-    for (let each in _alerts) {(function(_idx, _arr){if (_id === _arr[_idx].order){b_h = true;}})(each, _alerts);}
+    for (let each in _alerts) {(function(_idx, _arr){if (_id === _arr[_idx].course){b_h = true;}})(each, _alerts);}
     return b_h;
 }
 /**
@@ -238,13 +243,17 @@ function wsConnect()
     }
     wsSocket.onerror = function (error) {console.log('WebSocket error on wsSocket: ', error);};
     wsSocket.onopen = function ()
-    {console.log ('connect.onOpen initiated to: '+host_address); wsSocket.send('connected to client');};
+    {console.log ('connect.onOpen initiated to: ' + host_address); wsSocket.send('connected to client');};
     wsSocket.onmessage = function (message)
     {
-        let incoming
+        let incoming;
         incoming = message.data;
-        // console.log(method+ ' incoming is: '+incoming);
+        
         while (incoming instanceof Object === false){incoming = JSON.parse(incoming);}
+
+        console.log(method+ ' incoming type is: '+incoming.type);
+        console.log(method + ' incoming data is: ' + incoming.data);
+
         switch (incoming.type)
         {
         case 'Message':
@@ -252,7 +261,7 @@ function wsConnect()
             break;
         case 'Alert':
             let event = JSON.parse(incoming.data);
-            addNotification(event.type, event.ID, event.orderID);
+            addNotification(event.type, event.ID, event.courseCode);
             break;
         case 'BlockChain':
             _blctr ++;
