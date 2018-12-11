@@ -109,6 +109,16 @@ p.message{
 	padding: 0px;
 	text-align: left;
 }
+
+p.lightmessage{
+	color: #efb8bf;
+	font-size: 1em;
+	margin: .125em;
+	padding: 0px;
+	text-align: left;
+}
+
+
 .spacer{
 	height: 1em;
 	width: 100%;
@@ -133,10 +143,10 @@ p.message{
 	position: fixed;
 	height: 10%;
 	margin-left: 0%;
-	width: 100%;
+	width: 97.9%;
 	top: 90%;
 	padding: 4px;
-	overflow-x: auto;
+	overflow-x: scroll;
     overflow-y: hidden;
 	white-space: nowrap;
 }
