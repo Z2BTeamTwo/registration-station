@@ -73,7 +73,7 @@ function memberLoad ()
         students_string = _getMembers(students);
         registrars_string = _getMembers(registrars);
         cashiers_string = _getMembers(cashiers);
-        console.log('Students array', students);
+        // console.log('Students array', students);
 
         });
 }
@@ -119,7 +119,7 @@ function deferredMemberLoad()
 function _getMembers(_members)
 {
     let _str = '';
-    console.log('get members array', _members);
+    // console.log('get members array', _members);
     for (let each in _members)
     {(function(_idx, _arr){_str +='<option value="'+_arr[_idx].id+'">' +_arr[_idx].participantName+'</option>';})(each, _members);}
     _str += '</select>';
@@ -171,9 +171,9 @@ function addNotification(_event, _id, _courseCode)
  */
 function toggleAlert(_target, _array, _count)
 {
-    console.log(_target);
-    console.log(_array);
-    console.log(_count);
+    // console.log(_target);
+    // console.log(_array);
+    // console.log(_count);
     if (_array.length < 1)
     {$(_target).removeClass('on'); $(_target).addClass('off'); }
     else {$(_count).empty(); $(_count).append(_array.length);
@@ -198,7 +198,7 @@ function getSubscriber(_id)
  */
 function z2bSubscribe(_type, _id)
 {
-    console.log('z2b-events.js - in z2bSubscribe for id ', _id, 'type:', _type);
+    // console.log('z2b-events.js - in z2bSubscribe for id ', _id, 'type:', _type);
     subscribers.push({'type': _type, 'id': _id});
 }
 /**
@@ -251,8 +251,8 @@ function wsConnect()
         
         while (incoming instanceof Object === false){incoming = JSON.parse(incoming);}
 
-        console.log(method+ ' incoming type is: '+incoming.type);
-        console.log(method + ' incoming data is: ' + incoming.data);
+        // console.log(method+ ' incoming type is: '+incoming.type);
+        // console.log(method + ' incoming data is: ' + incoming.data);
 
         switch (incoming.type)
         {

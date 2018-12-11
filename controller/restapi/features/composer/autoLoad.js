@@ -32,6 +32,8 @@ const BusinessNetworkConnection = require('composer-client').BusinessNetworkConn
 
 const svc = require('./Z2B_Services');
 const config = require('../../../env.json');
+const admin_connection = require('../../../connection.json');
+admin_connection.keyValStore = _home+config.keyValStore;
 
 /**
  * itemTable and memberTable are used by the server to reduce load time requests
@@ -120,8 +122,7 @@ let adminConnection = new AdminConnection();
                                     _meta.businessNetwork = config.composer.network;
                                     _meta.userName = result.userID;
                                     _meta.enrollmentSecret = result.userSecret;
-                                    config.connectionProfile.keyValStore = _home+config.connectionProfile.keyValStore;
-                                    let tempCard = new hlc_idCard(_meta, config.connectionProfile);
+                                    let tempCard = new hlc_idCard(_meta, admin_connection);
                                     return adminConnection.importCard(result.userID, tempCard)
                                     .then ((_res) => {
                                         if (_res) {console.log('card updated');} else {console.log('card imported');}

@@ -73,6 +73,8 @@ router.get('/composer/admin/getCreds*', hlcAdmin.getCreds);
 router.get('/composer/admin/getAllProfiles*', hlcAdmin.getAllProfiles);
 router.get('/composer/admin/listAsAdmin*', hlcAdmin.listAsAdmin);
 router.get('/composer/admin/getRegistries*', hlcAdmin.getRegistries);
+router.get('/composer/admin/getKubeAddress', hlcAdmin.getKubeAddress);
+
 
 router.post('/composer/admin/createProfile*', hlcAdmin.createProfile);
 router.post('/composer/admin/deleteProfile*', hlcAdmin.deleteProfile);

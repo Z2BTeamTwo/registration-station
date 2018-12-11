@@ -355,7 +355,7 @@ exports.addCourse = function (req, res, next) {
  */
 function _monitor(locals, _event)
 {
-    console.log('in _monitor');
+    // console.log('in _monitor');
     let method = '_monitor';
     console.log(method+ ' _event received: '+_event.$type+' for course: '+_event.courseCode);
     // create an event object and give it the event type, the orderID, the buyer id and the eventID
@@ -424,7 +424,7 @@ exports.init_z2bEvents = function (req, res, next)
 //        svc.createAlertSocket();
         let businessNetworkConnection;
         businessNetworkConnection = new BusinessNetworkConnection();
-        businessNetworkConnection.setMaxListeners(200);
+        businessNetworkConnection.setMaxListeners(50);
         //
         // v0.14
         // return businessNetworkConnection.connect(config.composer.connectionProfile, config.composer.network, config.composer.adminID, config.composer.adminPW)

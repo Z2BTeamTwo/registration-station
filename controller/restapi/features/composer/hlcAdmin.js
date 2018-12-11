@@ -24,7 +24,8 @@ const BusinessNetworkDefinition = require('composer-common').BusinessNetworkDefi
 const BusinessNetworkConnection = require('composer-client').BusinessNetworkConnection;
 const config = require('../../../env.json');
 const NS = 'org.acme.Z2BTestNetwork';
-
+const admin_connection = require('../../../connection.json');
+admin_connection.keyValStore = _home+config.keyValStore;
 
 /**
  * display the admin and network info
@@ -51,19 +52,7 @@ exports.adminNew = function() {
  * @function
  */
 exports.adminConnect = function(req, res, next) {
-    let adminConnection = new composerAdmin.AdminConnection();
-    // connection prior to V0.15
-    //    adminConnection.connect(config.composer.connectionProfile, config.composer.adminID, config.composer.adminPW)
-    // connection in v0.15
-    adminConnection.connect(config.composer.adminCard)
-    .then(function(){
-        console.log('create connection successful ');
-        res.send({connection: 'succeeded'});
-    })
-    .catch(function(error){
-        console.log('create connection failed: ',error);
-        res.send(error);
-    });
+
 };
 
 /**
@@ -113,22 +102,7 @@ exports.createProfile = function(req, res, next) {
  * @function
  */
 exports.deleteProfile = function(req, res, next) {
-    let adminConnection = new composerAdmin.AdminConnection();
-    // connection prior to V0.15
-    //    adminConnection.connect(config.composer.connectionProfile, config.composer.adminID, config.composer.adminPW)
-    // connection in v0.15
-    adminConnection.connect(config.composer.adminCard)
-    .then(function(){
-        adminConnection.deleteProfile(req.body.profileName)
-            .then(function(result){
-                console.log('delete profile successful: ',result);
-                res.send({profile: 'succeeded'});
-            })
-            .catch(function(error){
-                console.log('delete profile failed: ',error);
-                res.send({profile: error});
-            });
-    });
+
 };
 
 /**
@@ -143,28 +117,6 @@ exports.deleteProfile = function(req, res, next) {
  */
 exports.deploy = function(req, res, next) {
 
-    let archiveFile = fs.readFileSync(path.join(path.dirname(require.main.filename),'network/dist',req.body.myArchive));
-
-    let adminConnection = new composerAdmin.AdminConnection();
-
-    return BusinessNetworkDefinition.fromArchive(archiveFile)
-        .then(function(archive) {
-        // connection prior to V0.15
-        //    adminConnection.connect(config.composer.connectionProfile, config.composer.adminID, config.composer.adminPW)
-        // connection in v0.15
-            adminConnection.connect(config.composer.adminCard)
-            .then(function(){
-                adminConnection.deploy(archive)
-                    .then(function(){
-                        console.log('business network '+req.body.myArchive+' deployed successful: ');
-                        res.send({deploy: req.body.myArchive+' deploy succeeded'});
-                    })
-                    .catch(function(error){
-                        console.log('business network '+req.body.myArchive+' deploy failed: ',error);
-                        res.send({deploy: error});
-                    });
-            });
-        });
 };
 /**
  * Installs a new BusinessNetworkDefinition to the Hyperledger Fabric. The connection must be connected for this method to succeed.
@@ -178,33 +130,6 @@ exports.deploy = function(req, res, next) {
  */
 exports.networkInstall = function(req, res, next) {
 
-    let archiveFile = fs.readFileSync(path.join(path.dirname(require.main.filename),'network/dist',req.body.myArchive));
-
-    let adminConnection = new composerAdmin.AdminConnection();
-    return BusinessNetworkDefinition.fromArchive(archiveFile)
-    .then((businessNetworkDefinition) => {
-        // connection prior to V0.15
-        //    adminConnection.connect(config.composer.connectionProfile, config.composer.adminID, config.composer.adminPW)
-        // connection in v0.15
-        adminConnection.connect(config.composer.adminCard)
-        .then(() => {
-            return adminConnection.install(businessNetworkDefinition.getName())
-                .then(() => {
-                    console.log('business network '+req.body.myArchive+' installed successful: ');
-                    res.send({install: req.body.myArchive+' install succeeded'});
-                })
-                .catch((error) => {
-                    console.log('business network '+req.body.myArchive+' error with adminConnection.install: ',error.message);
-                    res.send({install: error.message});
-                });
-        })
-        .catch((error) => {console.log('error with adminConnection.connect', error.message);
-            res.send({install: error.message});
-        });
-    })
-    .catch((error) => {console.log('error with fromArchive', error.message);
-        res.send({install: error.message});
-    });
 };
 
 /**
@@ -219,27 +144,6 @@ exports.networkInstall = function(req, res, next) {
  */
 exports.networkStart = function(req, res, next) {
 
-    let archiveFile = fs.readFileSync(path.join(path.dirname(require.main.filename),'network/dist',req.body.myArchive));
-    let adminConnection = new composerAdmin.AdminConnection();
-
-    return BusinessNetworkDefinition.fromArchive(archiveFile)
-        .then(function(archive) {
-        // connection prior to V0.15
-        //    adminConnection.connect(config.composer.connectionProfile, config.composer.adminID, config.composer.adminPW)
-        // connection in v0.15
-            adminConnection.connect(config.composer.adminCard)
-            .then(function(){
-                adminConnection.start(archive)
-                    .then(function(){
-                        console.log('business network '+req.body.myArchive+' installed successful: ');
-                        res.send({install: req.body.myArchive+' install succeeded'});
-                    })
-                    .catch(function(error){
-                        console.log('business network '+req.body.myArchive+' install failed: ',error);
-                        res.send({install: error});
-                    });
-            });
-        });
 };
 
 /**
@@ -251,22 +155,7 @@ exports.networkStart = function(req, res, next) {
  * @function
  */
 exports.disconnect = function(req, res, next) {
-    let adminConnection = new composerAdmin.AdminConnection();
-    // connection prior to V0.15
-    //    adminConnection.connect(config.composer.connectionProfile, config.composer.adminID, config.composer.adminPW)
-    // connection in v0.15
-    adminConnection.connect(config.composer.adminCard)
-    .then(function(){
-        adminConnection.disconnect()
-            .then(function(result){
-                console.log('network disconnect successful: ');
-                res.send({disconnect: 'succeeded'});
-            })
-            .catch(function(error){
-                console.log('network disconnect failed: ',error);
-                res.send(error);
-            });
-    });
+
 };
 /**
  * Retrieve all connection profiles from the profile store being used by this AdminConnection.
@@ -389,23 +278,7 @@ exports.ping = function(req, res, next) {
  * @function
  */
 exports.undeploy = function(req, res, next) {
-    let adminConnection = new composerAdmin.AdminConnection();
-    // connection prior to V0.15
-    //    adminConnection.connect(config.composer.connectionProfile, config.composer.adminID, config.composer.adminPW)
-    // connection in v0.15
-    adminConnection.connect(config.composer.adminCard)
-    .then(function(){
-        adminConnection.undeploy(req.body.businessNetwork)
-        .then(function(result){
-            console.log(req.body.businessNetwork+' network undeploy successful ');
-            res.send({undeploy: req.body.businessNetwork+' network undeploy successful '});
-        })
-        .catch(function(error){
-            let _error = error;
-            console.log(req.body.businessNetwork+' network undeploy failed: '+_error);
-            res.send({undeploy: _error.toString()});
-        });
-    });
+
 };
 /**
  * Updates an existing BusinessNetworkDefinition on the Hyperledger Fabric. The BusinessNetworkDefinition must have been previously deployed.
@@ -418,30 +291,6 @@ exports.undeploy = function(req, res, next) {
  */
 exports.update = function(req, res, next) {
 
-    let netName = req.body.myArchive.split('.')[0];
-    let archiveFile = fs.readFileSync(path.join(path.dirname(require.main.filename),'network/dist',req.body.myArchive));
-
-    let adminConnection = new composerAdmin.AdminConnection();
-
-    return BusinessNetworkDefinition.fromArchive(archiveFile)
-    .then(function(archive) {
-        // connection prior to V0.15
-        //    adminConnection.connect(config.composer.connectionProfile, config.composer.adminID, config.composer.adminPW)
-        // connection in v0.15
-        adminConnection.connect(config.composer.adminCard)
-        .then(function(){
-            adminConnection.update(archive)
-                .then(function(){
-                    console.log(netName+' network update successful: ');
-                    res.send({update: req.body.myArchive+' network update successful '});
-                })
-                .catch(function(error){
-                    let _error = error;
-                    console.log(req.body.myArchive+' network update failed: '+_error);
-                    res.send({update: _error.toString()});
-                });
-        });
-    });
 };
 
 /**
@@ -582,7 +431,7 @@ exports.createCard = function(req, res, next) {
     _meta.userName = req.body.id;
     _meta.enrollmentSecret = req.body.secret;
     config.connectionProfile.keyValStore = _home+config.connectionProfile.keyValStore;
-    let tempCard = new hlc_idCard(_meta, config.connectionProfile);
+    let tempCard = new hlc_idCard(_meta, admin_connection);
     adminConnection.connect(config.composer.adminCard)
     .then(() => {
         return adminConnection.importCard(req.body.id, tempCard)
@@ -702,8 +551,8 @@ exports.getAssets = function(req, res, next) {
                             }
                             res.send({'result': 'success', 'courses': allCourses});
                         })
-                        .catch((error) => {console.log('error with getAllOrders', error);
-                            res.send({'result': 'failed', 'error': 'getAllOrders: '+error.message});
+                        .catch((error) => {console.log('error with getAllCourses', error);
+                            res.send({'result': 'failed', 'error': 'getAllCourses: '+error.message});
                         });
                     })
                     .catch((error) => {console.log('error with getRegistry', error);
@@ -834,4 +683,8 @@ exports.getHistory = function(req, res, next) {
             .catch((error) => {console.log('error with business network Connect', error);});
     })
     .catch((error) => {console.log('error with admin network Connect', error);});
+};
+
+exports.getKubeAddress = function(req, res, next) {
+    res.send(config.kube_address);
 };

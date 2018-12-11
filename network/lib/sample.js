@@ -58,7 +58,7 @@ function CreateCourse(register) {
  * @transaction
  */
 function RegisterCourse(register) {
-    if (register.course.status == JSON.stringify(courseStatus.Created) || JSON.parse(register.course.status).code == courseStatus.Dropped.code || (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusAccepted.code & register.course.registrationStatus == 'Dropped') || JSON.parse(register.course.status).code == courseStatus.RegistrationStatusDenied.code)
+    if (register.course.status == JSON.stringify(courseStatus.Created) || JSON.parse(register.course.status).code == courseStatus.Dropped.code || (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusForwarded.code & register.course.registrationStatus == 'Dropped') || JSON.parse(register.course.status).code == courseStatus.RegistrationStatusDenied.code)
     {
         register.course.student = register.student;
         register.course.registrar = register.registrar;
@@ -156,26 +156,23 @@ function PayTuition(register) {
  * @transaction
  */
 function RefundTuition(register) {
-    if (JSON.parse(register.course.status).code == courseStatus.RegistrationStatusForwarded.code || (JSON.parse(register.course.status).code == courseStatus.TuitionPaid.code & register.course.amountDue - register.course.amountPaid + register.course.amountRefunded < 0) || register.course.status == JSON.stringify(courseStatus.Cancelled))
-    {
-        register.course.student = register.student;
-        register.course.registrar = register.registrar;
-        register.course.cashier = register.cashier;
-        register.course.refundReason = register.reason;
-        register.course.amountRefunded += register.amountRefunded;
-        register.course.refunded = new Date().toISOString();
-        var _status = courseStatus.Refunded;
-        register.course.status = JSON.stringify(_status);
-        return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
-            .then(function (assetRegistry) {
-                return assetRegistry.update(register.course)
-                .then (function (_res) 
-                    {
-                        z2bEmit('Refunded', register.course);
-                        return (_res);
-                    }).catch(function(error){return(error);});
-            });
-        }
+    register.course.student = register.student;
+    register.course.registrar = register.registrar;
+    register.course.cashier = register.cashier;
+    register.course.refundReason = register.reason;
+    register.course.amountRefunded += register.amountRefunded;
+    register.course.refunded = new Date().toISOString();
+    var _status = courseStatus.Refunded;
+    register.course.status = JSON.stringify(_status);
+    return getAssetRegistry('org.acme.Z2BTestNetwork.Course')
+        .then(function (assetRegistry) {
+            return assetRegistry.update(register.course)
+            .then (function (_res) 
+                {
+                    z2bEmit('Refunded', register.course);
+                    return (_res);
+                }).catch(function(error){return(error);});
+        });
 }
 /**
  * Record a acceptance of registration status update

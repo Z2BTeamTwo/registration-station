@@ -1,8 +1,7 @@
 applications:
 - path: .
-  memory: 128M
+  memory: 256M
   instances: 1
-  domain: mybluemix.net
-  name: Z2B-Chapter03
-  host: Z2B-Chapter03
+  route: RegistrationStation.mybluemix.net
+  name: RegistrationStation
   disk_quota: 1024M

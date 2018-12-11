@@ -198,9 +198,9 @@ function displayCourseForm()
             options.cashier = 'cashier@waketech.edu';
             options.course = JSON.stringify(selectedCourse);
             console.log(options);
-            _courseDiv.empty(); _courseDiv.append(formatMessage(textPrompts.courseProcess.create_msg));
+            _courseDiv.empty(); _courseDiv.append(formatMessage(textPrompts.courseProcess.create_msg, true));
             $.when($.post('/composer/client/addCourse', options)).done(function(_res)
-            {    _courseDiv.empty(); _courseDiv.append(formatMessage(_res.result)); console.log(_res);});
+            {    _courseDiv.empty(); _courseDiv.append(formatMessage(_res.result, true)); console.log(_res);});
         });
     });
 }
@@ -317,7 +317,12 @@ function formatCourses(_target, _courses)
             break;
         case courseStatus.RegistrationStatusForwarded.code:
             _date = _arr[_idx].registrationStatusForwarded;
+            if (_arr[_idx].registrationStatus == 'Registered'){
             _action += '<option value="'+textPrompts.courseProcess.Drop.select+'">'+textPrompts.courseProcess.Drop.message+'</option>';
+            }
+            else if (_arr[_idx].registrationStatus == 'Dropped'){
+                _action += '<option value="'+textPrompts.courseProcess.Register.select+'">'+textPrompts.courseProcess.Register.message+'</option>';
+            }
             break;
         case courseStatus.Cancelled.code:
             _date = _arr[_idx].courseCancelled;

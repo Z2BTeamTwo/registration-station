@@ -19,7 +19,7 @@
 let connectionProfileName = 'z2b-test-profile';
 let networkFile = 'zerotoblockchain-network.bna';
 let businessNetwork = 'zerotoblockchain-network';
-
+let kube_address = '0.0.0.0';
 let host_address = window.location.host;
 
 let students = new Array();
@@ -47,12 +47,17 @@ let courseStatus = {
 */
 function initPage ()
 {
-    // goMultiLingual() establishes what languages are available for this web app, populates the header with available languages and sets the default language to US_English
-    goMultiLingual('US_English', 'index');
-    // singleUX loads the members already present in the network
-    memberLoad();
-    // goChainEvents creates a web socket connection with the server and initiates blockchain event monitoring
-    getChainEvents();
-    // get the asynch port
-    wsConnect();
+    $.when($.get('/composer/admin/getKubeAddress')).done(function(_addr)
+    {
+        kube_address = _addr;
+        console.log('looking for kubernetes at: '+_addr);
+        // goMultiLingual() establishes what languages are available for this web app, populates the header with available languages and sets the default language to US_English
+        goMultiLingual('US_English', 'index');
+        // singleUX loads the members already present in the network
+        memberLoad();
+        // goChainEvents creates a web socket connection with the server and initiates blockchain event monitoring
+        getChainEvents();
+        // get the asynch port
+        wsConnect();
+    });
 }

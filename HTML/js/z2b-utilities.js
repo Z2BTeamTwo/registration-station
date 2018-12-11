@@ -290,7 +290,15 @@ function displayAPI(_api)
  * @param {String} _msg - text to be enclosed in html message format
  * @returns {String} - html formatted message
  */
-function formatMessage(_msg) {return '<p class="message">'+_msg+'</p>';}
+function formatMessage(_msg, dark = false) {
+    
+    if (dark){
+        return '<p class="lightmessage">'+_msg+'</p>';
+    } else {
+        return '<p class="message">'+_msg+'</p>';
+    }
+
+}
 
 
 /**
